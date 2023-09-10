@@ -27,12 +27,14 @@ postgres=# \l
 postgres=#
 </pre>
 
-The next thing which needs to happen is configuring both the publisher, which is the
-brew-managed localhost instance, and the subscriber which is going to be the instance
-running in the docker container. Configuring in the Docker container is going to be
-a bit tricky. The configuration details for Postgres are [Chapter 31 Logical
-Replication](https://www.postgresql.org/docs/12/logical-replication.html). Getting
-the Docker file configured will be some work on stack overflow.
+The next thing which needs to happen is configuring both the publisher and subscriber.
+The following will minimize the amount of configuration, as the localhost configuration is
+very easy to persistently modify, leaving the epheremal configuration limited to
+the docker postgres instance:
+
+- **Publisher**: the brew-managed localhost instance. Configure once.
+- **Subscriber**: the instance running in the docker container. Configure via docker.
+- Configuring in the Docker container is going to be a bit tricky. The configuration details for Postgres are [Chapter 31 Logical Replication](https://www.postgresql.org/docs/12/logical-replication.html). Getting the Docker file configured will be some work on stack overflow.
 
 With a brew install, keep track of local changes is always a real hassle. What I should do
 is create a backup file, make the modifications, then store the diff between the two
