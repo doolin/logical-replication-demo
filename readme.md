@@ -22,20 +22,20 @@ General cleanup, try these:
     docker system df
 ```
 
-Once that's done, the following should return any information:
+Once that's done, the following should _not_ return any information:
 
 1. `docker ps -a`
 2. `docker container ls`
 3. `docker images`
 
-Now it's to rebuild.
+Now it's time to rebuild.
 
 ## Postgres on Docker
 
 Three step procedure:
 
 1. build the image from the Dockerfile
-2. run the image to build the container
+2. run the image to start the container
 3. log in to the running container
 
 Do the following:
@@ -55,7 +55,7 @@ works with the following:
 
 THIS WILL NOT RUN THE LOCAL IMAGE UNLESS EVERYTHING IS CLEANED UP!
 
-`docker run --name post-tag --rm -p 5433:5432 -e POSTGRES_PASSWORD=foobar -d posttag`
+`docker run --name posttag --rm -p 5433:5432 -e POSTGRES_PASSWORD=foobar -d posttag`
 
 Consider always using the `--rm` flag to make it easier to rebuild and rerun containers.
 
