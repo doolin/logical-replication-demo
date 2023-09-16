@@ -1,16 +1,23 @@
+# Postgres Logical Replication
+
+The goal here is to set up logical replication running on localhost, _viz._ a Macbook.
+We'll be using the [Postgres documentation](https://www.postgresql.org/docs/15/logical-replication.html).
+
+## Postgres on Docker
+
 I've managed to log into the docker container running on 5432. Now
 to see if I can get logged in when it's running on 5433. Yep, that
 works with the following:
 
 `docker run --name docker-post -p 5433:5432 -e POSTGRES_PASSWORD=foobar -d postgres`
 
-This is what it looks like when running:
+This is what it looks like when running immediately after a clean install:
 
 <pre class="brash:Bash">
 09:01:39 doolin@hinge:~  ruby-2.6.3
 $ psql -U postgres -p 5433 -h localhost
 Password for user postgres:
-psql (12.3)
+psql (14.9)
 Type "help" for help.
 
 postgres=# \l
@@ -27,6 +34,9 @@ postgres=# \l
 postgres=#
 </pre>
 
+
+## Publish/Subscribe
+
 The next thing which needs to happen is configuring both the publisher and subscriber.
 The following will minimize the amount of configuration, as the localhost configuration is
 very easy to persistently modify, leaving the epheremal configuration limited to
@@ -40,8 +50,10 @@ With a brew install, keep track of local changes is always a real hassle. What I
 is create a backup file, make the modifications, then store the diff between the two
 files.
 
+### Publisher configuration
+
 For the [publisher
-configuration](https://www.postgresql.org/docs/12/logical-replication-config.html):
+configuration](https://www.postgresql.org/docs/15/logical-replication-config.html):
 
 > On the publisher side, `wal_level` must be set to logical, and
 > `max_replication_slots` must be set to at least the number of subscriptions
@@ -70,8 +82,17 @@ Here's the diff
 > #max_replication_slots = 10	# max number of replication slots
 </pre>
 
-Now do `pg_ctl -D /usr/local/var/postgres restart` and ensure psql still
-logs in.
+Now the server needs to be restarted, either will work with a `brew` installation:
+
+- `brew services restart postgresql@14`
+- `pg_ctl -D /opt/homebrew/var/postgresql@14 restart`
+
+Ensure works by logging in with `psql -U postgres` and running the query
+`select * from pg_file_settings;` to see the values which were set in the
+configuration file.
+
+
+### Subscriber configuration
 
 We'll try and get the [subscriber
 configuration](https://www.postgresql.org/docs/12/logical-replication-config.html)
@@ -118,3 +139,17 @@ postgres=# select version();
 (1 row)
 </pre>
 
+
+### Postgres configuration in Docker file
+
+I put this project down years ago when I ran out of patience with the Docker `COPY` command for dealing with Postgres configuration files. This blog post on [How to modify postgresql config file running inside docker](https://devniklesh.medium.com/how-to-modify-postgresql-config-file-running-inside-docker-e06fe4f7a072) shows another way to do it. I don't think it's the best way to do it, but if I can get it to work, I can figure out something better later.
+
+```
+postgres=# SHOW config_file;
+               config_file
+------------------------------------------
+ /var/lib/postgresql/data/postgresql.conf
+(1 row)
+
+postgres=#
+```
