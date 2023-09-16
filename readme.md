@@ -1,5 +1,7 @@
 # Postgres Logical Replication
 
+MAKE SURE TO RUN THE DOCKER IMAGE WHICH WAS BUILT LOCALLY.
+
 The goal here is to set up logical replication running on localhost, _viz._ a Macbook.
 We'll be using the [Postgres documentation](https://www.postgresql.org/docs/15/logical-replication.html).
 
@@ -8,6 +10,8 @@ We'll be using the [Postgres documentation](https://www.postgresql.org/docs/15/l
 I've managed to log into the docker container running on 5432. Now
 to see if I can get logged in when it's running on 5433. Yep, that
 works with the following:
+
+THIS WILL NOT RUN THE LOCAL IMAGE!
 
 `docker run --name docker-post -p 5433:5432 -e POSTGRES_PASSWORD=foobar -d postgres`
 
