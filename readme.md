@@ -5,7 +5,33 @@ MAKE SURE TO RUN THE DOCKER IMAGE WHICH WAS BUILT LOCALLY.
 The goal here is to set up logical replication running on localhost, _viz._ a Macbook.
 We'll be using the [Postgres documentation](https://www.postgresql.org/docs/15/logical-replication.html).
 
+
+General cleanup, try these:
+```docker system prune -af && \
+    docker image prune -af && \
+    docker system prune -af --volumes && \
+    docker system df
+```
+
+
 ## Postgres on Docker
+
+Three step procedure:
+
+1. build the image from the Dockerfile
+2. run the image to build the container
+3. log in to the running container
+
+Do the following:
+
+- remove all previous postgres images and containers
+    - `docker container rm <id>`
+    - `docker image rm <id>`
+    - build it: `docker buildx build . --tag posttag`
+    - run it: `docker run --name posttag -p 5433:5432 -e POSTGRES_PASSWORD=foobar -d posttag`
+    - log in: `docker exec -it posttag /bin/bash`
+- docker buildx build .
+
 
 I've managed to log into the docker container running on 5432. Now
 to see if I can get logged in when it's running on 5433. Yep, that
@@ -13,7 +39,7 @@ works with the following:
 
 THIS WILL NOT RUN THE LOCAL IMAGE!
 
-`docker run --name docker-post -p 5433:5432 -e POSTGRES_PASSWORD=foobar -d postgres`
+`docker run --name post-tag -p 5433:5432 -e POSTGRES_PASSWORD=foobar -d posttag`
 
 This is what it looks like when running immediately after a clean install:
 

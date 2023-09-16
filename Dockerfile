@@ -1,4 +1,4 @@
-FROM postgres:10
+FROM postgres:latest
 # USER postgres
 
 RUN echo "foobar"
