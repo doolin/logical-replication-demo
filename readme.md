@@ -1,10 +1,19 @@
 # Postgres Logical Replication
 
-MAKE SURE TO RUN THE DOCKER IMAGE WHICH WAS BUILT LOCALLY.
+NEXT: provision the postgresql.conf file into the the subscriber database running in the container. The files in git repo will need be updated as they are from an earlier version of postgres, and were going to configure the container as the publisher (which we'll do later). The procedure is to copy the conf file from the container, make the changes and commit them to the repo, then rebuild the container with the updated configuration file.
+
+---
 
 The goal here is to set up logical replication running on localhost, _viz._ a Macbook.
 We'll be using the [Postgres documentation](https://www.postgresql.org/docs/15/logical-replication.html).
+The replicated database server will be running in a local Docker image, and we want to make sure we actually use the local image when we run the container.
 
+MAKE SURE TO RUN THE DOCKER IMAGE WHICH WAS BUILT LOCALLY.
+
+
+## Preparing the Docker system
+
+Skip this section if you're good with Docker and know how to use containers effectively on localhost. What we're going to do is a complete cleanup of the local Docker system to make it easier to build and debug the logical replication example.
 
 General cleanup, try these:
 ```docker system prune -af && \
@@ -13,6 +22,13 @@ General cleanup, try these:
     docker system df
 ```
 
+Once that's done, the following should return any information:
+
+1. `docker ps -a`
+2. `docker container ls`
+3. `docker images`
+
+Now it's to rebuild.
 
 ## Postgres on Docker
 
@@ -27,8 +43,8 @@ Do the following:
 - remove all previous postgres images and containers
     - `docker container rm <id>`
     - `docker image rm <id>`
-    - build it: `docker buildx build . --tag posttag`
-    - run it: `docker run --name posttag -p 5433:5432 -e POSTGRES_PASSWORD=foobar -d posttag`
+    - build it: `docker buildx build . --tag posttag` which will produce an image.
+    - run it: `docker run --name posttag -p 5433:5432 -e POSTGRES_PASSWORD=foobar -d posttag` which will result in a running container as shown by `docker ps`
     - log in: `docker exec -it posttag /bin/bash`
 - docker buildx build .
 
@@ -37,9 +53,11 @@ I've managed to log into the docker container running on 5432. Now
 to see if I can get logged in when it's running on 5433. Yep, that
 works with the following:
 
-THIS WILL NOT RUN THE LOCAL IMAGE!
+THIS WILL NOT RUN THE LOCAL IMAGE UNLESS EVERYTHING IS CLEANED UP!
 
-`docker run --name post-tag -p 5433:5432 -e POSTGRES_PASSWORD=foobar -d posttag`
+`docker run --name post-tag --rm -p 5433:5432 -e POSTGRES_PASSWORD=foobar -d posttag`
+
+Consider always using the `--rm` flag to make it easier to rebuild and rerun containers.
 
 This is what it looks like when running immediately after a clean install:
 
