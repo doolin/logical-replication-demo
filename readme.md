@@ -18,15 +18,16 @@ Skip this section if you're good with Docker and know how to use containers effe
 General cleanup, try these:
 ```docker system prune -af && \
     docker image prune -af && \
-    docker system prune -af --volumes && \
+    docker system prune -af --volumes && \ # deletes build cache objects
     docker system df
 ```
+
 
 Once that's done, the following should _not_ return any information:
 
 1. `docker ps -a`
 2. `docker container ls`
-3. `docker images`
+3. `docker images`-a
 
 Now it's time to rebuild.
 

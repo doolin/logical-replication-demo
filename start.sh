@@ -1,23 +1,19 @@
 #!/bin/bash
 
+esc=""
+redf="${esc}[31m";
+reset="${esc}[0m"
 
-docker container prune
-docker system prune
+press_enter()
+{
+  read -p "${redf}Press [Enter]...${reset}"
+}
 
-# Get a fresh postgres:
+press_enter
 
-docker pull postgres
+# Run cleanup.sh for these commands:
+# docker container prune
+# docker system prune
 
-# docker run  -e POSTGRES_PASSWORD=foobar -p 127.0.0.1:5433:5433 -d postgres
-
-# docker run --name docker-post -p 5433:5432 -e POSTGRES_PASSWORD=foobar -d postgres
-# from a `docker build -t localpost:13 .`
-docker run \
-  --name docker-post-10 -p 5433:5432 -e POSTGRES_PASSWORD=foobar \
-  localpost:13
-
-  # -v $CUSTOM_CONFIG:/etc/postgres/postgresql.conf \
-  # postgres -c config_file=/etc/postgresql/postgresql.conf
-#  -c max_replication_slots=15
-
-# docker run -e POSTGRES_PASSWORD=foobar -d postgres
+docker buildx build . -t posttag
+docker run --name posttag -p 5433:5432 -e POSTGRES_PASSWORD=foobar -d posttag
