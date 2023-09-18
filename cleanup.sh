@@ -15,7 +15,7 @@ press_enter
 docker container prune
 docker system prune
 
-exit 0
+# exit 0
 
 # This is a sort of nucklear option, and will more or less delete everything.
 docker system prune -af && \

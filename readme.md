@@ -1,8 +1,5 @@
 # Postgres Logical Replication
 
-NEXT: provision the postgresql.conf file into the the subscriber database running in the container. The files in git repo will need be updated as they are from an earlier version of postgres, and were going to configure the container as the publisher (which we'll do later). The procedure is to copy the conf file from the container, make the changes and commit them to the repo, then rebuild the container with the updated configuration file.
-
----
 
 The goal here is to set up logical replication running on localhost, _viz._ a Macbook.
 We'll be using the [Postgres documentation](https://www.postgresql.org/docs/15/logical-replication.html).
@@ -10,6 +7,7 @@ The replicated database server will be running in a local Docker image, and we w
 
 MAKE SURE TO RUN THE DOCKER IMAGE WHICH WAS BUILT LOCALLY.
 
+Check the subscription on the publisher with `select * from pg_stat_replication;`
 
 ## Preparing the Docker system
 
@@ -45,7 +43,7 @@ Do the following:
     - `docker container rm <id>`
     - `docker image rm <id>`
     - build it: `docker buildx build . --tag posttag` which will produce an image.
-    - run it: `docker run --name posttag -p 5433:5432 -e POSTGRES_PASSWORD=foobar -d posttag` which will result in a running container as shown by `docker ps`
+    - run it: `docker run --name posttag --rm -p 5433:5432 -e POSTGRES_PASSWORD=foobar -d posttag` which will result in a running container as shown by `docker ps`
     - log in: `docker exec -it posttag /bin/bash`
 - docker buildx build .
 
