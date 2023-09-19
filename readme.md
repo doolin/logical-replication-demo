@@ -200,3 +200,10 @@ postgres=# SHOW config_file;
 
 postgres=#
 ```
+
+### Debugging
+
+Some useful commands:
+
+- `docker logs -f posttag`
+- 
