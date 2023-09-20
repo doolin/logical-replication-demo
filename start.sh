@@ -11,9 +11,7 @@ press_enter()
 
 press_enter
 
-# Run cleanup.sh for these commands:
-# docker container prune
-# docker system prune
+# Run ./cleanup.sh first
 
 docker buildx build . -t posttag
-docker run --name posttag -p 5433:5432 -e POSTGRES_PASSWORD=foobar -d posttag
+docker run --name posttag --rm -p 5433:5432 -e POSTGRES_PASSWORD=foobar -d posttag

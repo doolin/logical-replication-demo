@@ -9,6 +9,17 @@ MAKE SURE TO RUN THE DOCKER IMAGE WHICH WAS BUILT LOCALLY.
 
 Check the subscription on the publisher with `select * from pg_stat_replication;`
 
+## How to operate
+
+1. open 3 iterms pointed to this directory.
+1. ensure the relevant container is stopped `docker stop posttag`
+1. run `./cleanup.sh`
+1. run `start.sh`
+1. run `docker logs -f posttag` in one of the terminals
+1. run `replication.sh`
+1. log into the container database `psql -U postgres -p 5433 -h localhost`
+
+
 ## Preparing the Docker system
 
 Skip this section if you're good with Docker and know how to use containers effectively on localhost. What we're going to do is a complete cleanup of the local Docker system to make it easier to build and debug the logical replication example.
@@ -205,5 +216,5 @@ postgres=#
 
 Some useful commands:
 
-- `docker logs -f posttag`
-- 
+- `docker logs -f posttag` for subscriber logs
+-  ensure the postgres versions are compatible; consider running the same versions of postgres for both publisher and subscriber
