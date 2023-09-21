@@ -14,7 +14,7 @@ Check the subscription on the publisher with `select * from pg_stat_replication;
 1. open 3 iterms pointed to this directory.
 1. ensure the relevant container is stopped `docker stop posttag`
 1. run `./cleanup.sh`
-1. run `start.sh`
+1. run `./start.sh`
 1. run `docker logs -f posttag` in one of the terminals
 1. run `replication.sh`
 1. log into the container database `psql -U postgres -p 5433 -h localhost`
@@ -171,7 +171,8 @@ Some steps:
 
 1. Log into current postgres docker container and examine the
 appropriate values in the configuration file. For a container named
-`docker-post`, `docker exec -it docker-post /bin/bash`.
+`posttag`:
+    - `docker exec -it posttag /bin/bash`.
 
 2. We need to create a local Dockerfile, acquire the postgresql.conf
 which is compatible, configure that correctly, then copy the conf file
@@ -186,7 +187,7 @@ In this case, I'm making target `.`.
   * `max_worker_processes`
 
 5. After adding material to Dockerfile, need to build it:
-`docker build -t localpost:13 .`
+`docker build buildx . -t posttag`
 
 Side note:
 <pre>
@@ -218,3 +219,4 @@ Some useful commands:
 
 - `docker logs -f posttag` for subscriber logs
 -  ensure the postgres versions are compatible; consider running the same versions of postgres for both publisher and subscriber
+- On the published, check the replication table: `select * from pg_stat_replication;`
