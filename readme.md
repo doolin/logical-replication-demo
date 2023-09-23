@@ -1,13 +1,8 @@
 # Postgres Logical Replication
 
-
 The goal here is to set up logical replication running on localhost, _viz._ a Macbook.
 We'll be using the [Postgres documentation](https://www.postgresql.org/docs/15/logical-replication.html).
 The replicated database server will be running in a local Docker image, and we want to make sure we actually use the local image when we run the container.
-
-MAKE SURE TO RUN THE DOCKER IMAGE WHICH WAS BUILT LOCALLY.
-
-Check the subscription on the publisher with `select * from pg_stat_replication;`
 
 ## How to operate
 
@@ -17,8 +12,9 @@ Check the subscription on the publisher with `select * from pg_stat_replication;
 1. run `./start.sh`
 1. run `docker logs -f posttag` in one of the terminals
 1. run `replication.sh`
-1. log into the container database `psql -U postgres -p 5433 -h localhost`
-
+1. log into the container database `PGPASSWORD=foobar psql -U postgres -p 5433 -h localhost`
+1. log into localhost and insert `INSERT INTO quux VALUES (4, 'four'), (5, 'five'), (6, 'six');`
+1. check the values with `SELECT * FROM quux;`
 
 ## Preparing the Docker system
 
@@ -30,7 +26,6 @@ General cleanup, try these:
     docker system prune -af --volumes && \ # deletes build cache objects
     docker system df
 ```
-
 
 Once that's done, the following should _not_ return any information:
 
@@ -217,6 +212,8 @@ postgres=#
 
 Some useful commands:
 
+- MAKE SURE TO RUN THE DOCKER IMAGE WHICH WAS BUILT LOCALLY.
 - `docker logs -f posttag` for subscriber logs
 -  ensure the postgres versions are compatible; consider running the same versions of postgres for both publisher and subscriber
 - On the published, check the replication table: `select * from pg_stat_replication;`
+- Check the subscription on the publisher with `select * from pg_stat_replication;`
