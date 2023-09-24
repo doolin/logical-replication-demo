@@ -1,15 +1,19 @@
 #!/bin/bash
 
-esc=""
-redf="${esc}[31m";
-reset="${esc}[0m"
+# TODO: warn the user that this will delete everything which isn't running.
+# TODO: ask the user to stop the containers first.
+# TODO: set this up to only operate on the `posttag` container.
 
-press_enter()
-{
-  read -p "${redf}Press [Enter]...${reset}"
-}
+# esc=""
+# redf="${esc}[31m";
+# reset="${esc}[0m"
 
-press_enter
+# press_enter()
+# {
+#   read -p "${redf}Press [Enter]...${reset}"
+# }
+
+# press_enter
 
 docker container prune
 docker system prune

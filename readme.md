@@ -6,15 +6,18 @@ The replicated database server will be running in a local Docker image, and we w
 
 ## How to operate
 
+We're going to use a container named `posttag` for the entire exercise.
+
 1. open 3 iterms pointed to this directory.
 1. ensure the relevant container is stopped `docker stop posttag`
 1. run `./cleanup.sh`
 1. run `./start.sh`
 1. run `docker logs -f posttag` in one of the terminals
 1. run `replication.sh`
-1. log into the container database `PGPASSWORD=foobar psql -U postgres -p 5433 -h localhost`
+1. log into the publisher database on localhost `psql -U postgres` -d foobar
+1. log into the subscriber database on the container `PGPASSWORD=foobar psql -U postgres -p 5433 -h localhost`
 1. log into localhost and insert `INSERT INTO quux VALUES (4, 'four'), (5, 'five'), (6, 'six');`
-1. check the values with `SELECT * FROM quux;`
+1. check the subscriber values with `SELECT * FROM quux;`
 
 ## Preparing the Docker system
 
