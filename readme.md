@@ -4,26 +4,30 @@ The goal here is to set up logical replication running on localhost, _viz._ a Ma
 We'll be using the [Postgres documentation](https://www.postgresql.org/docs/15/logical-replication.html).
 The replicated database server will be running in a local Docker image, and we want to make sure we actually use the local image when we run the container.
 
-## How to operate
+## Semi-automated setup
 
-We're going to use a container named `posttag` for the entire exercise.
+We're going to use a container named `posttag` for the entire exercise. The following procedure is a fast track, where many of the relevant commands are scripted:
 
 1. open 3 iterms pointed to this directory.
 1. ensure the relevant container is stopped `docker stop posttag`
-1. run `./cleanup.sh`
-1. run `./start.sh`
+1. run `./cleanup.sh` to remove previous docker cruft. Note: this nukes everything docker which isn't running.
+1. run `./start.sh` to build and run the docker container with the second postgres database.
 1. run `docker logs -f posttag` in one of the terminals
-1. run `replication.sh`
+1. run `replication.sh` to configure the publisher running on localhost and subscriber running in a docker container.
 1. log into the publisher database on localhost `psql -U postgres` -d foobar
 1. log into the subscriber database on the container `PGPASSWORD=foobar psql -U postgres -p 5433 -h localhost`
 1. log into localhost and insert `INSERT INTO quux VALUES (4, 'four'), (5, 'five'), (6, 'six');`
 1. check the subscriber values with `SELECT * FROM quux;`
 
-## Preparing the Docker system
+## Manual setup
 
-Skip this section if you're good with Docker and know how to use containers effectively on localhost. What we're going to do is a complete cleanup of the local Docker system to make it easier to build and debug the logical replication example.
+### Preparing the Docker system
 
-General cleanup, try these:
+Skip this section if you're good with Docker and know how to use containers effectively on localhost.
+
+Otherwise we're going to do a complete cleanup of the local Docker system to make it easier to build and debug the logical replication example.
+
+General cleanup command, also in the `./cleanup.sh` script:
 ```docker system prune -af && \
     docker image prune -af && \
     docker system prune -af --volumes && \ # deletes build cache objects
@@ -38,7 +42,7 @@ Once that's done, the following should _not_ return any information:
 
 Now it's time to rebuild.
 
-## Postgres on Docker
+### Postgres on Docker
 
 Three step procedure:
 
@@ -91,7 +95,7 @@ postgres=#
 </pre>
 
 
-## Publish/Subscribe
+### Publish/Subscribe
 
 The next thing which needs to happen is configuring both the publisher and subscriber.
 The following will minimize the amount of configuration, as the localhost configuration is
@@ -106,7 +110,7 @@ With a brew install, keep track of local changes is always a real hassle. What I
 is create a backup file, make the modifications, then store the diff between the two
 files.
 
-### Publisher configuration
+#### Publisher configuration
 
 For the [publisher
 configuration](https://www.postgresql.org/docs/15/logical-replication-config.html):
@@ -148,7 +152,7 @@ Ensure works by logging in with `psql -U postgres` and running the query
 configuration file.
 
 
-### Subscriber configuration
+#### Subscriber configuration
 
 We'll try and get the [subscriber
 configuration](https://www.postgresql.org/docs/12/logical-replication-config.html)
@@ -197,7 +201,7 @@ postgres=# select version();
 </pre>
 
 
-### Postgres configuration in Docker file
+#### Postgres configuration in Docker file
 
 I put this project down years ago when I ran out of patience with the Docker `COPY` command for dealing with Postgres configuration files. This blog post on [How to modify postgresql config file running inside docker](https://devniklesh.medium.com/how-to-modify-postgresql-config-file-running-inside-docker-e06fe4f7a072) shows another way to do it. I don't think it's the best way to do it, but if I can get it to work, I can figure out something better later.
 
