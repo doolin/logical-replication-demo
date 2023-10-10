@@ -1,16 +1,10 @@
 #!/bin/bash
 
-# esc=""
-# redf="${esc}[31m";
-# reset="${esc}[0m"
-
-# press_enter()
-# {
-#   read -p "${redf}Press [Enter]...${reset}"
-# }
-
+source ./helper.sh
+# TODO: add infotext to the helper script
 # press_enter
 
+# TODO: prompt the user to stop the containers first, then run cleanup.sh
 # Run ./cleanup.sh first
 
 docker buildx build . -t posttag

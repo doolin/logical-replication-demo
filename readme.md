@@ -1,8 +1,6 @@
 # Postgres Logical Replication
 
-The goal here is to set up logical replication running on localhost, _viz._ a Macbook.
-We'll be using the [Postgres documentation](https://www.postgresql.org/docs/15/logical-replication.html).
-The replicated database server will be running in a local Docker image, and we want to make sure we actually use the local image when we run the container.
+The goal here is to set up Postgres logical replication running on Macbook localhost, publishing to an instance of Postgres running in a Docker container. We'll be using the [Postgres documentation](https://www.postgresql.org/docs/15/logical-replication.html). The subscribing database server will be running in a local Docker image, and we want to make sure we actually use the local image when we run the container.
 
 ## Semi-automated setup
 
