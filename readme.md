@@ -1,6 +1,6 @@
 # Postgres Logical Replication
 
-The goal here is to set up Postgres logical replication running on Macbook localhost, publishing to an instance of Postgres running in a Docker container. We'll be using the [Postgres documentation](https://www.postgresql.org/docs/15/logical-replication.html). The subscribing database server will be running in a local Docker image, and we want to make sure we actually use the local image when we run the container.
+The goal here is to better understand how Postgres logical replication works, and provide a testbed for learning how best to configure logical replication. First, we set up Postgres logical replication running on Macbook localhost, publishing to an instance of Postgres running in a Docker container. We'll be using the [Postgres documentation](https://www.postgresql.org/docs/15/logical-replication.html). The subscribing database server will be running in a local Docker image, and we want to make sure we actually use the local image when we run the container.
 
 ## Semi-automated setup
 
@@ -18,6 +18,14 @@ We're going to use a container named `posttag` for the entire exercise. The foll
 1. check the subscriber values with `SELECT * FROM quux;`
 
 ## Manual setup
+
+The semi-automated procedure listed above could probably be fully automated into a single script, and in a production system that would be warranted. However, there is still value in  manually working through all the configuration steps, it provides a better understanding of how each step works, and provides opportunity to learn from any errors occurring during configuration. It proceeds as follows:
+
+1. Prepare and operate a docker postgres instance.
+2. Configure postgres localhost and docker instances for publish/subscribe.
+3. Check the runtime to ensure it's operating correctly.
+
+A running localhost instance of postgres on port 5432 is assumed.
 
 ### Preparing the Docker system
 
