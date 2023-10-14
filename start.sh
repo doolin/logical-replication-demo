@@ -9,3 +9,6 @@ source ./helper.sh
 
 docker buildx build . -t subscriber1
 docker run --name subscriber1 --rm -p 5433:5432 -e POSTGRES_PASSWORD=foobar -d subscriber1
+
+docker buildx build . -t subscriber2
+docker run --name subscriber2 --rm -p 5434:5432 -e POSTGRES_PASSWORD=foobar -d subscriber2
