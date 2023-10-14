@@ -4,13 +4,13 @@ The goal here is to better understand how Postgres logical replication works, an
 
 ## Semi-automated setup
 
-We're going to use a container named `posttag` for the entire exercise. The following procedure is a fast track, where many of the relevant commands are scripted:
+We're going to use a container named `subscriber1` for the entire exercise. The following procedure is a fast track, where many of the relevant commands are scripted:
 
 1. open 3 iterms pointed to this directory.
-1. ensure the relevant container is stopped `docker stop posttag`
+1. ensure the relevant container is stopped `docker stop subscriber1`
 1. run `./cleanup.sh` to remove previous docker cruft. Note: this nukes everything docker which isn't running.
 1. run `./start.sh` to build and run the docker container with the second postgres database.
-1. run `docker logs -f posttag` in one of the terminals
+1. run `docker logs -f subscriber1` in one of the terminals
 1. run `replication.sh` to configure the publisher running on localhost and subscriber running in a docker container.
 1. log into the publisher database on localhost `psql -U postgres` -d foobar
 1. log into the subscriber database on the container `PGPASSWORD=foobar psql -U postgres -p 5433 -h localhost`
@@ -61,9 +61,9 @@ Do the following:
 - remove all previous postgres images and containers
     - `docker container rm <id>`
     - `docker image rm <id>`
-    - build it: `docker buildx build . --tag posttag` which will produce an image.
-    - run it: `docker run --name posttag --rm -p 5433:5432 -e POSTGRES_PASSWORD=foobar -d posttag` which will result in a running container as shown by `docker ps`
-    - log in: `docker exec -it posttag /bin/bash`
+    - build it: `docker buildx build . --tag subscriber1` which will produce an image.
+    - run it: `docker run --name subscriber1 --rm -p 5433:5432 -e POSTGRES_PASSWORD=foobar -d subscriber1` which will result in a running container as shown by `docker ps`
+    - log in: `docker exec -it subscriber1 /bin/bash`
 - docker buildx build .
 
 
@@ -73,7 +73,7 @@ works with the following:
 
 THIS WILL NOT RUN THE LOCAL IMAGE UNLESS EVERYTHING IS CLEANED UP!
 
-`docker run --name posttag --rm -p 5433:5432 -e POSTGRES_PASSWORD=foobar -d posttag`
+`docker run --name subscriber1 --rm -p 5433:5432 -e POSTGRES_PASSWORD=foobar -d subscriber1`
 
 Consider always using the `--rm` flag to make it easier to rebuild and rerun containers.
 
@@ -179,8 +179,8 @@ Some steps:
 
 1. Log into current postgres docker container and examine the
 appropriate values in the configuration file. For a container named
-`posttag`:
-    - `docker exec -it posttag /bin/bash`.
+`subscriber1`:
+    - `docker exec -it subscriber1 /bin/bash`.
 
 2. We need to create a local Dockerfile, acquire the postgresql.conf
 which is compatible, configure that correctly, then copy the conf file
@@ -195,7 +195,7 @@ In this case, I'm making target `.`.
   * `max_worker_processes`
 
 5. After adding material to Dockerfile, need to build it:
-`docker build buildx . -t posttag`
+`docker build buildx . -t subscriber1`
 
 Side note:
 <pre>
@@ -226,7 +226,7 @@ postgres=#
 Some useful commands:
 
 - MAKE SURE TO RUN THE DOCKER IMAGE WHICH WAS BUILT LOCALLY.
-- `docker logs -f posttag` for subscriber logs
+- `docker logs -f subscriber1` for subscriber logs
 -  ensure the postgres versions are compatible; consider running the same versions of postgres for both publisher and subscriber
 - On the published, check the replication table: `select * from pg_stat_replication;`
 - Check the subscription on the publisher with `select * from pg_stat_replication;`

@@ -2,7 +2,11 @@
 
 # TODO: warn the user that this will delete everything which isn't running.
 # TODO: ask the user to stop the containers first.
-# TODO: set this up to only operate on the `posttag` container.
+
+containers=("subscriber1" "subscriber2")
+for container in "${containers[@]}"; do
+  docker stop "$container" >/dev/null 2>&1 # stdout and stderr to /dev/null
+done
 
 source ./helper.sh
 press_enter
