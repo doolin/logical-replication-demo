@@ -12,7 +12,7 @@ We're going to use a container named `subscriber1` for the entire exercise. The 
 1. run `./start.sh` to build and run the docker container with the second postgres database.
 1. run `docker logs -f subscriber1` in one of the terminals
 1. run `replication.sh` to configure the publisher running on localhost and subscriber running in a docker container.
-1. log into the publisher database on localhost `psql -U postgres` -d foobar
+1. log into the publisher database on localhost `psql -U postgres` -d publisher
 1. log into the subscriber database on the container `PGPASSWORD=foobar psql -U postgres -p 5433 -h localhost`
 1. log into localhost and insert `INSERT INTO quux VALUES (4, 'four'), (5, 'five'), (6, 'six');`
 1. check the subscriber values with `SELECT * FROM quux;`

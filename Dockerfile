@@ -1,7 +1,7 @@
 FROM postgres:14
 # USER postgres
 
-RUN echo "foobar"
+RUN echo "building postgres 14"
 COPY ./foo.txt /quux.txt
 # COPY --chown=postgres:postgres ./postgresql.conf.test /var/lib/postgresql/data/
 # COPY postgresql.conf.test /var/lib/postgresql/data/
