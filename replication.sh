@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# TODO: see if the configuration can be done via psql instead of using
+# the configuration file. In production, this will be necessary.
+
 # Replication commands for the localhost publisher database.
 dropdb foobar
 createdb foobar
