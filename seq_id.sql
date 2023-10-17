@@ -1,0 +1,2 @@
+-- schema with sequential id to test replication
+-- TODO: sqlfluff

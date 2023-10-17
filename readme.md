@@ -131,6 +131,8 @@ configuration](https://www.postgresql.org/docs/15/logical-replication-config.htm
 * `max_replication_slots = 10`
 * `max_wal_senders = 15`
 
+All of these are in the `pg_settings` table as name, setting.
+
 Here's the diff
 
 <pre>
@@ -230,3 +232,20 @@ Some useful commands:
 -  ensure the postgres versions are compatible; consider running the same versions of postgres for both publisher and subscriber
 - On the published, check the replication table: `select * from pg_stat_replication;`
 - Check the subscription on the publisher with `select * from pg_stat_replication;`
+
+## Demo data using Goodreads CSV export
+
+[Exporting from Goodreads](https://www.goodreads.com/review/import) is straightforward. The resulting CSV file is easy to read into Ruby using `irb`:
+
+ ```
+$ irb
+3.2.2 :001 > require 'csv'
+ => true
+3.2.2 :002 > csv = CSV.read('goodreads_export-2023-10-17.csv', headers: true)
+ =>
+#<CSV::Table mode:col_or_row row_count:154>
+...
+3.2.2 :003 >
+```
+
+The schema was extracted using the `csvsql` command from the `csvkit` tools.
