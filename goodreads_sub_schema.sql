@@ -2,6 +2,7 @@
 -- TODO: sqlfluff
 
 CREATE TABLE "goodreads_books" (
+  "id" BIGINT PRIMARY KEY, -- does not autoincrement
   "Book Id" DECIMAL NOT NULL, 
   "Title" VARCHAR NOT NULL, 
   "Author" VARCHAR NOT NULL, 

@@ -24,10 +24,13 @@ schema="CREATE TABLE books(a int, b text, PRIMARY KEY(a));"
 
 # Publisher
 # TODO: add a sequential id table, see profiles table in tasklets_development.
+# Reminder: -c indicates a sql command to run.
 psql -c "$schema" publisher
 psql -c "INSERT INTO books VALUES (1, 'one'), (2, 'two'), (3, 'three');" publisher
 psql -c "CREATE PUBLICATION bookspub FOR TABLE books;" publisher
 
+# Test the goodreads schemas
+psql -f ./goodreads_pub_schema.sql publisher
 
 # Subscriber
 # Replication commands for the Docker subscriber database.
@@ -36,6 +39,9 @@ psql -c "CREATE PUBLICATION bookspub FOR TABLE books;" publisher
 # TODO: ensure there is no sequence table in the subscriber1 database.
 PGPASSWORD=foobar psql -c "$schema" -U postgres -p 5433 -h localhost
 PGPASSWORD=foobar psql -c "CREATE SUBSCRIPTION sub1 CONNECTION 'host=host.docker.internal dbname=publisher' PUBLICATION bookspub;" -U postgres -p 5433 -h localhost
+
+PGPASSWORD=foobar psql -U postgres -p 5433 -h localhost -f ./goodreads_pub_schema.sql
+
 
 # TODO: create a subscriber2
 
