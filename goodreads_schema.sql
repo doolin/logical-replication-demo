@@ -1,7 +1,7 @@
 -- initial generation from csvkit using csvsql.
 -- TODO: sqlfluff
 
-CREATE TABLE "goodreads_export-2023-10-17" (
+CREATE TABLE "goodreads_books" (
   "Book Id" DECIMAL NOT NULL, 
   "Title" VARCHAR NOT NULL, 
   "Author" VARCHAR NOT NULL, 
