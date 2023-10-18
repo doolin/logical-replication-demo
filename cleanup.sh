@@ -3,7 +3,7 @@
 # TODO: warn the user that this will delete everything which isn't running.
 # TODO: inform user this script will halt then delete the subscriber containers.
 source ./helper.sh
-press_enter
+# press_enter
 
 
 containers=("subscriber1" "subscriber2")

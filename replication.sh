@@ -19,18 +19,25 @@
 # Replication commands for the localhost publisher database.
 dropdb publisher
 createdb publisher
-# TODO: move to a schema.sql file
-schema="CREATE TABLE books(a int, b text, PRIMARY KEY(a));"
+# TODO: move to a books_schema.sql file
+schema="CREATE TABLE books(id bigint, a int, b text, PRIMARY KEY(id));"
 
 # Publisher
 # TODO: add a sequential id table, see profiles table in tasklets_development.
 # Reminder: -c indicates a sql command to run.
 psql -c "$schema" publisher
-psql -c "INSERT INTO books VALUES (1, 'one'), (2, 'two'), (3, 'three');" publisher
+psql -c "CREATE SEQUENCE books_id_seq ;" publisher
+psql -c "ALTER TABLE books ALTER COLUMN id SET DEFAULT nextval('books_id_seq');" publisher
+psql -c "INSERT INTO books(a, b) VALUES \
+    (1, 'Text for book 1'), \
+    (2, 'Text for book 2'), \
+    (3, 'Text for book 3'), \
+    (4, 'Text for book 4'), \
+    (5, 'Text for book 5');" publisher
 psql -c "CREATE PUBLICATION bookspub FOR TABLE books;" publisher
 
 # Test the goodreads schemas
-psql -f ./goodreads_pub_schema.sql publisher
+# psql -f ./goodreads_pub_schema.sql publisher
 
 # Subscriber
 # Replication commands for the Docker subscriber database.
