@@ -2,15 +2,17 @@
 
 # TODO: warn the user that this will delete everything which isn't running.
 # TODO: inform user this script will halt then delete the subscriber containers.
-source ./helper.sh
-# press_enter
-
+source ./ansi_colors.sh
+source ./helpers.sh
+infotext "This will clean up the example docker containers"
+press_enter
 
 containers=("subscriber1" "subscriber2")
 for container in "${containers[@]}"; do
   docker stop "$container" >/dev/null 2>&1 # stdout and stderr to /dev/null
 done
 
+exit 0
 
 # docker container prune
 # docker system prune

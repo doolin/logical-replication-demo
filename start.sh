@@ -1,8 +1,9 @@
 #!/bin/bash
 
-source ./helper.sh
+source ./helpers.sh
 # TODO: add infotext to the helper script
-# press_enter
+infotext "Build and start the subscriber containers..."
+press_enter
 
 # TODO: prompt the user to stop the containers first, then run cleanup.sh
 # Run ./cleanup.sh first
