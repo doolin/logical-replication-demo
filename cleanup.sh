@@ -12,8 +12,6 @@ for container in "${containers[@]}"; do
   docker stop "$container" >/dev/null 2>&1 # stdout and stderr to /dev/null
 done
 
-exit 0
-
 # docker container prune
 # docker system prune
 

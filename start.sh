@@ -1,5 +1,6 @@
 #!/bin/bash
 
+source ./ansi_colors.sh
 source ./helpers.sh
 # TODO: add infotext to the helper script
 infotext "Build and start the subscriber containers..."

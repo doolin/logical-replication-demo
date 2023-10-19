@@ -21,7 +21,7 @@ dropdb publisher
 createdb publisher
 # TODO: move to a books_schema.sql file
 # TODO: change to sku int, title text
-schema="CREATE TABLE books(id bigint, a int, b text, PRIMARY KEY(id));"
+schema="CREATE TABLE books(id bigint, sku int, title text, PRIMARY KEY(id));"
 
 # Publisher
 # TODO: add a sequential id table, see profiles table in tasklets_development.
@@ -30,12 +30,7 @@ psql -c "$schema" publisher
 psql -c "CREATE SEQUENCE books_id_seq ;" publisher
 psql -c "ALTER TABLE books ALTER COLUMN id SET DEFAULT nextval('books_id_seq');" publisher
 # TODO: initial insertion from CSV file
-psql -c "INSERT INTO books(a, b) VALUES \
-    (1, 'Text for book 1'), \
-    (2, 'Text for book 2'), \
-    (3, 'Text for book 3'), \
-    (4, 'Text for book 4'), \
-    (5, 'Text for book 5');" publisher
+psql -f books_data.sql publisher
 psql -c "CREATE PUBLICATION bookspub FOR TABLE books;" publisher
 
 # TODO: insert more, then update, then delete. Verify changes propagate to subscriber.
