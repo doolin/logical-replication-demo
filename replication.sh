@@ -9,26 +9,20 @@
 
 # TODO: create a sql script to add books with title, author, and topic.
 #       Have two topics: Leadership and Technology.
-# 1. (DONE) change table name from quux to books.
-# 2. add columns for author, title, and topic, with autoincrementing id.
-# 3. determine how autoincrementing id works with replication.
-# 4. create a sql or csv file for importing books. CSV is probably easier.
-# 5. consider having the schema in its own SQL file, first step is extracting
-#    schema to a bash string.
+# 1. add columns for author, title, and topic, with autoincrementing id.
+# 2. create a sql or csv file for importing books. CSV is probably easier.
+# 3. create a publication for the books table splitting replication by topic
 
 # Replication commands for the localhost publisher database.
 dropdb publisher
 createdb publisher
-# TODO: move to a books_schema.sql file
-# TODO: change to sku int, title text
-schema="CREATE TABLE books(id bigint, sku int, title text, PRIMARY KEY(id));"
 
 # Publisher
-# TODO: add a sequential id table, see profiles table in tasklets_development.
-# Reminder: -c indicates a sql command to run.
-psql -c "$schema" publisher
+# Reminder: -f loads a file, -c indicates a sql command to run.
+psql -f books_schema.sql publisher
 psql -c "CREATE SEQUENCE books_id_seq ;" publisher
 psql -c "ALTER TABLE books ALTER COLUMN id SET DEFAULT nextval('books_id_seq');" publisher
+
 # TODO: initial insertion from CSV file
 psql -f books_data.sql publisher
 psql -c "CREATE PUBLICATION bookspub FOR TABLE books;" publisher
