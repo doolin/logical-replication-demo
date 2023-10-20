@@ -133,7 +133,13 @@ configuration](https://www.postgresql.org/docs/15/logical-replication-config.htm
 
 All of these are in the `pg_settings` table as name, setting.
 
-Here's the diff
+There are two ways to configure, via settings file or using `ALTER SYSTEM`. Both methods require a databaser server restart.
+
+##### Configuration file
+
+Using a configuration file has the advantage of being able to diff changes in configuration files. This is almost always preferable, particularly when configuration files are under VC (which isn't a bad idea for anyone running their own cluster). However, the configuration file may not be available if the server is managed by a service provider.
+
+Here's the diff:
 
 <pre>
 193c193
@@ -158,6 +164,20 @@ Now the server needs to be restarted, either will work with a `brew` installatio
 Ensure works by logging in with `psql -U postgres` and running the query
 `select * from pg_file_settings;` to see the values which were set in the
 configuration file.
+
+##### ALTER SYSTEM
+
+When the server is managed by a service provider, the configuration file may not be available or convenient, so the logical replication settings will need to be changed directly on the database server.
+
+These can all be run with a `psql` command:
+- `ALTER SYSTEM SET max_wal_senders TO 20;`
+- `ALTER SYSTEM SET wal_level TO 'logical'; -- or 'replica', 'minimal', or 'archive' depending on desired level`
+- `ALTER SYSTEM SET max_replication_slots TO <desired_value>;`
+
+The database server will need to be restarted after any of the `ALTER SYSTEM` commands are executed. This works for my macbook:
+- `pg_ctl -D /opt/homebrew/var/postgresql@14 restart`
+
+These and any similar commands which configure the server run time need to be issued using an artifact which can be placed in version control. Ideally this would be a reversible migration script with up changing to the new values, and down restoring original values. This is fraught and easy to mess up. Care is warranted.
 
 
 #### Subscriber configuration
