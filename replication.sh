@@ -13,6 +13,9 @@
 # 2. create a sql or csv file for importing books. CSV is probably easier.
 # 3. create a publication for the books table splitting replication by topic
 
+# TODO: due diligence on https://github.com/shayonj/pg_easy_replicate
+# TODO: due diliegnce on pglogical
+
 # Replication commands for the localhost publisher database.
 dropdb publisher
 createdb publisher
