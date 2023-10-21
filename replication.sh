@@ -26,14 +26,14 @@ psql -f books_schema.sql publisher
 psql -c "CREATE SEQUENCE books_id_seq ;" publisher
 psql -c "ALTER TABLE books ALTER COLUMN id SET DEFAULT nextval('books_id_seq');" publisher
 
-# TODO: initial insertion from CSV file
-psql -f books_data.sql publisher
+psql -c "\COPY books ("sku", "title") FROM './books_data.csv' DELIMITER ',' CSV HEADER;" publisher
 psql -c "CREATE PUBLICATION bookspub FOR TABLE books;" publisher
 
 # TODO: insert more, then update, then delete. Verify changes propagate to subscriber.
 
-# Test the goodreads schemas
-# psql -f ./goodreads_pub_schema.sql publisher
+psql -f ./goodreads_pub_schema.sql publisher
+CSV_PATH="./goodreads_export-2023-10-17.csv"
+psql -c "\COPY goodreads_books(\"Book Id\", \"Title\", \"Author\", \"Author l-f\", \"Additional Authors\", \"ISBN\", \"ISBN13\", \"My Rating\", \"Average Rating\", \"Publisher\", \"Binding\", \"Number of Pages\", \"Year Published\", \"Original Publication Year\", \"Date Read\", \"Date Added\", \"Bookshelves\", \"Bookshelves with positions\", \"Exclusive Shelf\", \"My Review\", \"Spoiler\", \"Private Notes\", \"Read Count\", \"Owned Copies\") FROM '$CSV_PATH' DELIMITER ',' CSV HEADER;" publisher
 
 # Replication commands for the Docker subscriber database.
 #
