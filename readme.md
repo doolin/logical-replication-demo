@@ -2,6 +2,8 @@
 
 The goal here is to better understand how Postgres logical replication works, and provide a testbed for learning how best to configure logical replication. First, we set up Postgres logical replication running on Macbook localhost, publishing to an instance of Postgres running in a Docker container. We'll be using the [Postgres documentation](https://www.postgresql.org/docs/15/logical-replication.html). The subscribing database server will be running in a local Docker image, and we want to make sure we actually use the local image when we run the container.
 
+![Architecture](/images/logical-replication-architecture.svg)
+
 ## Semi-automated setup
 
 We're going to use a container named `subscriber1` for the entire exercise. The following procedure is a fast track, where many of the relevant commands are scripted:

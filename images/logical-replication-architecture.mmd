@@ -1,0 +1,21 @@
+graph TD
+
+    subgraph Publisher Database
+        pubDB(Publisher DB)
+    end
+
+    subgraph Subscriber 1
+        sub1DB(Subscriber 1 DB)
+    end
+
+    subgraph Subscriber 2
+        sub2DB(Subscriber 2 DB)
+    end
+
+    pubDB --> sub1DB
+    pubDB --> sub2DB
+
+    style pubDB fill:#f9d,stroke:#333,stroke-width:2px
+    style sub1DB fill:#9df,stroke:#333,stroke-width:2px
+    style sub2DB fill:#9fd,stroke:#333,stroke-width:2px
+
