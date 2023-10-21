@@ -29,11 +29,17 @@ psql -c "ALTER TABLE books ALTER COLUMN id SET DEFAULT nextval('books_id_seq');"
 psql -c "\COPY books ("sku", "title") FROM './books_data.csv' DELIMITER ',' CSV HEADER;" publisher
 psql -c "CREATE PUBLICATION bookspub FOR TABLE books;" publisher
 
-# TODO: insert more, then update, then delete. Verify changes propagate to subscriber.
-
 psql -f ./goodreads_pub_schema.sql publisher
 CSV_PATH="./goodreads_export-2023-10-17.csv"
 psql -c "\COPY goodreads_books(\"Book Id\", \"Title\", \"Author\", \"Author l-f\", \"Additional Authors\", \"ISBN\", \"ISBN13\", \"My Rating\", \"Average Rating\", \"Publisher\", \"Binding\", \"Number of Pages\", \"Year Published\", \"Original Publication Year\", \"Date Read\", \"Date Added\", \"Bookshelves\", \"Bookshelves with positions\", \"Exclusive Shelf\", \"My Review\", \"Spoiler\", \"Private Notes\", \"Read Count\", \"Owned Copies\") FROM '$CSV_PATH' DELIMITER ',' CSV HEADER;" publisher
+# TODO: use this instead.
+# HEADER="$(<goodreads_header.txt)"
+# HEADER=$(head -n 1 goodreads_export-2023-10-17.csv | sed 's/,/","/g; s/^/"/; s/$/"/')
+# psql -c "\COPY goodreads_books($HEADER) FROM '$CSV_PATH' DELIMITER ',' CSV HEADER;" publisher
+
+# TODO: see if copilot chat will work with these comments.
+# what we want to do next is to extract the headers from the csv file and use that to create the table,
+# making sure that the headers are valid column names. Then we can use the \COPY command to import the data.
 
 # Replication commands for the Docker subscriber database.
 #
@@ -48,5 +54,7 @@ PGPASSWORD=foobar psql -U postgres -p 5433 -h localhost -f ./goodreads_pub_schem
 PGPASSWORD=foobar psql -c "$schema" -U postgres -p 5434 -h localhost
 PGPASSWORD=foobar psql -c "CREATE SUBSCRIPTION sub2 CONNECTION 'host=host.docker.internal dbname=publisher' PUBLICATION bookspub;" -U postgres -p 5434 -h localhost
 PGPASSWORD=foobar psql -U postgres -p 5434 -h localhost -f ./goodreads_pub_schema.sql
+
+# TODO: insert more, then update, then delete. Verify changes propagate to subscriber.
 
 echo "All done"
