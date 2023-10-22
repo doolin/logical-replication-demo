@@ -26,7 +26,7 @@ psql -f books_schema.sql publisher
 psql -c "CREATE SEQUENCE books_id_seq ;" publisher
 psql -c "ALTER TABLE books ALTER COLUMN id SET DEFAULT nextval('books_id_seq');" publisher
 
-psql -c "\COPY books ("sku", "title") FROM './books_data.csv' DELIMITER ',' CSV HEADER;" publisher
+psql -c "\COPY books ("sku", "title", "topic") FROM './books_data.csv' DELIMITER ',' CSV HEADER;" publisher
 psql -c "CREATE PUBLICATION bookspub FOR TABLE books;" publisher
 
 psql -f ./goodreads_pub_schema.sql publisher
@@ -43,13 +43,13 @@ psql -c "\COPY goodreads_books($HEADER) FROM '$CSV_PATH' DELIMITER ',' CSV HEADE
 #
 # Subscriber1
 # Note: ensure there is no sequence table in the subscriber1 database.
-PGPASSWORD=foobar psql -c "$schema" -U postgres -p 5433 -h localhost
+PGPASSWORD=foobar psql -f books_schema.sql -U postgres -p 5433 -h localhost
 PGPASSWORD=foobar psql -c "CREATE SUBSCRIPTION sub1 CONNECTION 'host=host.docker.internal dbname=publisher' PUBLICATION bookspub;" -U postgres -p 5433 -h localhost
 PGPASSWORD=foobar psql -U postgres -p 5433 -h localhost -f ./goodreads_pub_schema.sql
 
 # Create subscriber2 database
 # Note: ensure there is no sequence table in the subscriber2 database.
-PGPASSWORD=foobar psql -c "$schema" -U postgres -p 5434 -h localhost
+PGPASSWORD=foobar psql -f books_schema.sql -U postgres -p 5434 -h localhost
 PGPASSWORD=foobar psql -c "CREATE SUBSCRIPTION sub2 CONNECTION 'host=host.docker.internal dbname=publisher' PUBLICATION bookspub;" -U postgres -p 5434 -h localhost
 PGPASSWORD=foobar psql -U postgres -p 5434 -h localhost -f ./goodreads_pub_schema.sql
 
