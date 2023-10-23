@@ -19,6 +19,13 @@ We're going to use a container named `subscriber1` for the entire exercise. The 
 1. log into localhost and insert `INSERT INTO books VALUES (4, 'four'), (5, 'five'), (6, 'six');`
 1. check the subscriber values with `SELECT * FROM books;`
 
+## Working with schema changes
+
+Schema changes for logical replication are fraught. Technically they aren't very difficult, but the people side of managing a number of engineers who ship a lot of Rails schema migrations on a regular basis is going to be difficult. The best bet would be changing the habit of reaching for a migration for everything, to stop treating the database as a giant global struct. Failing that, schema changes as expressed by Rails migrations would need to be slowed down to ensure schema replication occurred.
+
+In general, schema changes on the publisher are not replicated on subscribers. Unless certain conditions are met, schema changes will need to be run on both publisher and subscribers, and the replication state will likely need to be managed while the state is changed. At the time of writing, small scripts are being developed as a sort of dsl for managing state and configuration for the containers and databases.
+
+
 ## Manual setup
 
 The semi-automated procedure listed above could probably be fully automated into a single script, and in a production system that would be warranted. However, there is still value in  manually working through all the configuration steps, it provides a better understanding of how each step works, and provides opportunity to learn from any errors occurring during configuration. It proceeds as follows:
@@ -255,6 +262,20 @@ Some useful commands:
 - On the published, check the replication table: `select * from pg_stat_replication;`
 - Check the subscription on the publisher with `select * from pg_stat_replication;`
 
+#### Container logging
+
+The easiest way is to set up a tmux session as follows:
+
+```
+tmux new-session -d -s container-logs
+tmux split-window -h -t container-logs
+tmux send-keys -t container-logs:0.0 'docker logs -f subscriber1' C-m
+tmux send-keys -t container-logs:0.1 'docker logs -f subscriber2' C-m
+tmux attach -t container-logs
+```
+
+
+
 ## Demo data using Goodreads CSV export
 
 [Exporting from Goodreads](https://www.goodreads.com/review/import) is straightforward. The resulting CSV file is easy to read into Ruby using `irb`:
@@ -271,3 +292,39 @@ $ irb
 ```
 
 The schema was extracted using the `csvsql` command from the `csvkit` tools.
+
+## Replication risks
+
+The following is straight from GPT.
+
+Pausing replication in a PostgreSQL logical replication setup can be a strategic move in various scenarios like maintenance, schema changes, or handling outages. However, there are inherent risks and considerations:
+
+1. **WAL Accumulation on the Publisher**:
+   - When replication is paused, changes continue to accumulate in the Write-Ahead Log (WAL) on the publisher side. If replication is paused for an extended period, this can cause the WAL to grow significantly, potentially filling up storage.
+   - Replication slots ensure the publisher retains WAL segments necessary for the subscribers. If a subscriber isn't actively fetching and applying them, they'll keep accumulating.
+
+2. **Potential Data Inconsistency**:
+   - While replication is paused, changes continue to be made on the publisher. If any direct changes (inserts, updates, or deletes) are made on the subscriber during this time, they could result in data inconsistencies when replication is resumed.
+
+3. **Lag in Data Availability**:
+   - Pausing replication means the subscriber won't have up-to-date data. Depending on the application's needs, this can be problematic if timely data access is essential.
+
+4. **Resumption Overhead**:
+   - When replication is resumed after a long pause, there can be a substantial amount of data to synchronize. This synchronization might cause performance overhead on both the publisher (sending the data) and the subscriber (applying the data).
+
+5. **Schema Changes**:
+   - If you pause replication to make schema changes on the publisher, those changes won't automatically propagate to the subscriber. When replication is resumed, if the changes made aren't compatible with the existing replication setup, replication can break.
+   - For instance, if a column is added to a table on the publisher, and replication is resumed without adding the same column on the subscriber, replication will fail.
+
+6. **Risk of Forgetting**:
+   - This might seem trivial, but it's a genuine risk. If replication is paused for maintenance or some other reason, there's a risk someone might forget to resume it. Depending on monitoring and alerting setup, this can lead to prolonged periods of replication being inactive without anyone noticing.
+
+To mitigate these risks:
+
+- **Monitoring and Alerts**: Ensure that monitoring is in place to track the replication lag, WAL size, and disk usage. Alerts should be configured to notify if any of these metrics reach concerning levels.
+
+- **Documentation**: Any time replication is paused, the reason and expected duration should be documented, along with any necessary follow-up steps.
+
+- **Testing**: Before making major changes (like schema updates), test the process in a non-production environment to ensure smooth operations in production.
+
+In conclusion, while pausing replication can be beneficial in certain scenarios, it's essential to be aware of the risks and manage the process carefully.
