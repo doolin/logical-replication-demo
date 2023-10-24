@@ -1,9 +1,7 @@
-FROM postgres:14
+FROM postgres:16
 # USER postgres
 
-# TODO: upgrade to postgres 16.
-
-RUN echo "building postgres 14"
+RUN echo "building postgres 16"
 COPY ./foo.txt /quux.txt
 # COPY --chown=postgres:postgres ./postgresql.conf.test /var/lib/postgresql/data/
 # COPY postgresql.conf.test /var/lib/postgresql/data/
@@ -13,9 +11,11 @@ COPY ./foo.txt /quux.txt
 
 # https://stackoverflow.com/questions/30848670/how-to-customize-the-configuration-file-of-the-official-postgresql-docker-image
 
-# TODO: copy the postgresql.conf file from the working subscriber and update
+# Copy the postgresql.conf file from the working subscriber and update
 # this file to ensure the subscriber is configured correctly with the correct
 # version of postgresql configuration.
-COPY postgresql.conf      /etc/postgresql/postgresql.conf
+# If this file isn't copied, the configuration will have to be done manually,
+# and the container restarted.
+# COPY postgresql.conf      /etc/postgresql/postgresql.conf
 
-CMD ["postgres", "-c", "config_file=/etc/postgresql/postgresql.conf"]
+CMD ["postgres"] # , "-c", "config_file=/etc/postgresql/postgresql.conf"]

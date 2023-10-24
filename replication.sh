@@ -7,12 +7,8 @@
 #   starts of the container. It will be lost when the container is deleted.
 # - The settings are stored in the `pg_settings` table.
 
-# TODO: create a sql script to add books with title, author, and topic.
-#       Have two topics: Leadership and Technology.
-# 1. add columns for author, title, and topic, with autoincrementing id.
-# 2. create a sql or csv file for importing books. CSV is probably easier.
-# 3. create a publication for the books table splitting replication by topic
-
+# TODO: create publications for the books table splitting replication by topic
+# TODO: figure out how to handle created_at and updated_at compatible with Rails.
 # TODO: due diligence on https://github.com/shayonj/pg_easy_replicate
 # TODO: due diliegnce on pglogical
 
@@ -27,6 +23,7 @@ psql -c "CREATE SEQUENCE books_id_seq ;" publisher
 psql -c "ALTER TABLE books ALTER COLUMN id SET DEFAULT nextval('books_id_seq');" publisher
 
 psql -c "\COPY books ("sku", "title", "topic") FROM './books_data.csv' DELIMITER ',' CSV HEADER;" publisher
+# TODO: set the configuration for logical replication on the publisher database then restart the server with pg_ctl.
 psql -c "CREATE PUBLICATION bookspub FOR TABLE books;" publisher
 
 psql -f ./goodreads_pub_schema.sql publisher
