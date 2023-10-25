@@ -24,7 +24,13 @@ psql -c "ALTER TABLE books ALTER COLUMN id SET DEFAULT nextval('books_id_seq');"
 
 psql -c "\COPY books ("sku", "title", "topic") FROM './books_data.csv' DELIMITER ',' CSV HEADER;" publisher
 # TODO: set the configuration for logical replication on the publisher database then restart the server with pg_ctl.
+psql -c "ALTER SYSTEM SET wal_level = logical;" publisher
 psql -c "CREATE PUBLICATION bookspub FOR TABLE books;" publisher
+# Now we need to restart the server with pg_ctl. Could also use brew services restart postgresql@16
+# pg_ctl -D /opt/homebrew/var/postgresql@16 restart # not working quickly for some reason
+brew services restart postgresql@16
+sleep 1 # wait for the server to restart
+# psql -c "CREATE PUBLICATION bookspub FOR TABLE books;" publisher
 
 psql -f ./goodreads_pub_schema.sql publisher
 CSV_PATH="./goodreads_export-2023-10-17.csv"
