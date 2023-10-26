@@ -1,17 +1,25 @@
 # Various targets for driving specific scenarios
 # Might turn into a little dsl
 
-MERMAID_FILE=images/logical-replication-architecture.mmd
-SVG_OUTPUT=images/logical-replication-architecture.svg
-PNG_OUTPUT=images/logical-replication-architecture.png
+MERMAID_FILE= \
+  images/logical-replication-architecture.mmd \
+  images/sidekiq.mmd
 
-all: svg png
+SVG_OUTPUT= \
+  images/logical-replication-architecture.svg \
+  images/sidekiq.svg
 
-svg:
-	mmdc -i $(MERMAID_FILE) -o $(SVG_OUTPUT)
+PNG_OUTPUT= \
+  images/logical-replication-architecture.png \
+  images/sidekiq.png
 
-png:
-	mmdc -i $(MERMAID_FILE) -o $(PNG_OUTPUT)
+all: $(SVG_OUTPUT) $(PNG_OUTPUT)
+
+%.svg: %.mmd
+	mmdc -i $< -o $@
+
+%.png: %.mmd
+	mmdc -i $< -o $@
 
 clean:
 	rm -f $(SVG_OUTPUT) $(PNG_OUTPUT)
