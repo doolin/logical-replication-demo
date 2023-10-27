@@ -23,7 +23,6 @@ psql -c "CREATE SEQUENCE books_id_seq ;" publisher
 psql -c "ALTER TABLE books ALTER COLUMN id SET DEFAULT nextval('books_id_seq');" publisher
 
 psql -c "\COPY books ("sku", "title", "topic") FROM './books_data.csv' DELIMITER ',' CSV HEADER;" publisher
-# TODO: set the configuration for logical replication on the publisher database then restart the server with pg_ctl.
 psql -c "ALTER SYSTEM SET wal_level = logical;" publisher
 psql -c "CREATE PUBLICATION bookspub FOR TABLE books;" publisher
 # Now we need to restart the server with pg_ctl. Could also use brew services restart postgresql@16
@@ -37,10 +36,6 @@ CSV_PATH="./goodreads_export-2023-10-17.csv"
 # HEADER="$(<goodreads_header.txt)" # Save for future reference, very cool
 HEADER=$(head -n 1 goodreads_export-2023-10-17.csv | sed 's/,/","/g; s/^/"/; s/$/"/')
 psql -c "\COPY goodreads_books($HEADER) FROM '$CSV_PATH' DELIMITER ',' CSV HEADER;" publisher
-
-# TODO: see if copilot chat will work with these comments.
-# what we want to do next is to extract the headers from the csv file and use that to create the table,
-# making sure that the headers are valid column names. Then we can use the \COPY command to import the data.
 
 # Replication commands for the Docker subscriber database.
 #
