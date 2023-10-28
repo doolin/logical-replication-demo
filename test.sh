@@ -13,12 +13,12 @@ ROW_COUNT=$(PGPASSWORD=$DB_PASS psql -U $DB_USER -h $DB_HOST -p $DB_PORT -d $DB_
 # Remove leading/trailing white space from ROW_COUNT
 ROW_COUNT=$(echo $ROW_COUNT | xargs)
 
-# Check if the count is 5 and print the result
-if [ "$ROW_COUNT" -eq 5 ]; then
+# Check if the count is 2 and print the result
+if [ "$ROW_COUNT" -eq 2 ]; then
     echo "Subscriber 1 Test passed!"
 else
     echo "Subscriber 1 Test failed!"
-    echo "Expected: 5 rows. Found: $ROW_COUNT rows."
+    echo "Expected: 2 rows. Found: $ROW_COUNT rows."
 fi
 
 DB_PORT="5434"
@@ -29,10 +29,10 @@ ROW_COUNT=$(PGPASSWORD=$DB_PASS psql -U $DB_USER -h $DB_HOST -p $DB_PORT -d $DB_
 # Remove leading/trailing white space from ROW_COUNT
 ROW_COUNT=$(echo $ROW_COUNT | xargs)
 
-# Check if the count is 5 and print the result
-if [ "$ROW_COUNT" -eq 5 ]; then
+# Check if the count is 3 and print the result
+if [ "$ROW_COUNT" -eq 3 ]; then
     echo "Subscriber 2 Test passed!"
 else
     echo "Subscriber 2 Test failed!"
-    echo "Expected: 5 rows. Found: $ROW_COUNT rows."
+    echo "Expected: 3 rows. Found: $ROW_COUNT rows."
 fi

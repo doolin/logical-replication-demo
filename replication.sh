@@ -24,7 +24,8 @@ psql -c "ALTER TABLE books ALTER COLUMN id SET DEFAULT nextval('books_id_seq');"
 
 psql -c "\COPY books ("sku", "title", "topic") FROM './books_data.csv' DELIMITER ',' CSV HEADER;" publisher
 psql -c "ALTER SYSTEM SET wal_level = logical;" publisher
-psql -c "CREATE PUBLICATION bookspub FOR TABLE books;" publisher
+psql -c "CREATE PUBLICATION leadership_pub FOR TABLE books where (topic = 'leadership');" publisher
+psql -c "CREATE PUBLICATION technical_pub FOR TABLE books where (topic = 'technical');" publisher
 # Now we need to restart the server with pg_ctl. Could also use brew services restart postgresql@16
 # pg_ctl -D /opt/homebrew/var/postgresql@16 restart # not working quickly for some reason
 brew services restart postgresql@16
@@ -42,13 +43,13 @@ psql -c "\COPY goodreads_books($HEADER) FROM '$CSV_PATH' DELIMITER ',' CSV HEADE
 # Subscriber1
 # Note: ensure there is no sequence table in the subscriber1 database.
 PGPASSWORD=foobar psql -f books_schema.sql -U postgres -p 5433 -h localhost
-PGPASSWORD=foobar psql -c "CREATE SUBSCRIPTION sub1 CONNECTION 'host=host.docker.internal dbname=publisher' PUBLICATION bookspub;" -U postgres -p 5433 -h localhost
+PGPASSWORD=foobar psql -c "CREATE SUBSCRIPTION sub1 CONNECTION 'host=host.docker.internal dbname=publisher' PUBLICATION leadership_pub;" -U postgres -p 5433 -h localhost
 PGPASSWORD=foobar psql -U postgres -p 5433 -h localhost -f ./goodreads_pub_schema.sql
 
 # Create subscriber2 database
 # Note: ensure there is no sequence table in the subscriber2 database.
 PGPASSWORD=foobar psql -f books_schema.sql -U postgres -p 5434 -h localhost
-PGPASSWORD=foobar psql -c "CREATE SUBSCRIPTION sub2 CONNECTION 'host=host.docker.internal dbname=publisher' PUBLICATION bookspub;" -U postgres -p 5434 -h localhost
+PGPASSWORD=foobar psql -c "CREATE SUBSCRIPTION sub2 CONNECTION 'host=host.docker.internal dbname=publisher' PUBLICATION technical_pub;" -U postgres -p 5434 -h localhost
 PGPASSWORD=foobar psql -U postgres -p 5434 -h localhost -f ./goodreads_pub_schema.sql
 
 # TODO: insert more, then update, then delete. Verify changes propagate to subscriber.

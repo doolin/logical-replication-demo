@@ -6,8 +6,10 @@ CONFIG_FILE_PATH="."
 CONTAINERS=("subscriber1" "subscriber2")
 
 for CONTAINER_NAME in "${CONTAINERS[@]}"; do
+  if docker ps -a | grep -qw $CONTAINER_NAME; then
     docker stop $CONTAINER_NAME
-    docker rm $CONTAINER_NAME
+    # docker rm $CONTAINER_NAME # not needed when container is removed with --rm
+  fi
 done
 
 docker buildx build . -t $IMAGE_NAME # -f $DOCKERFILE_PATH .
