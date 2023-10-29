@@ -4,11 +4,18 @@ The goal here is to better understand how Postgres logical replication works, an
 
 ![Architecture](/images/logical-replication-architecture.svg)
 
+TODO:
+
+1. Rewrite this whole document.
+2. Have one section for a completely manual procedure for one pub/sub.
+3. Have a another segment for full automated two pub/subs.
+4. Describe the makefile and scripts.
+
 ## Semi-automated setup
 
-We're going to use a container named `subscriber1` for the entire exercise. The following procedure is a fast track, where many of the relevant commands are scripted:
+We're going to use an image named `subscriber` with containers named `subscriber1` and `subscriber2` for the entire exercise. The following procedure is a fast track, where many of the relevant commands are scripted:
 
-1. open 3 iterms pointed to this directory.
+1. open 3 iterms pointed to this directory. If you have `tmux` installed, the commands below are scripted to open a session logging both subscriber containers.
 1. ensure the relevant container is stopped `docker stop subscriber1`
 1. run `./cleanup.sh` to remove previous docker cruft. Note: this nukes everything docker which isn't running.
 1. run `./start.sh` to build and run the docker container with the second postgres database.
@@ -53,7 +60,7 @@ Once that's done, the following should _not_ return any information:
 
 1. `docker ps -a`
 2. `docker container ls`
-3. `docker images`-a
+3. `docker images -a``
 
 Now it's time to rebuild.
 
@@ -295,7 +302,44 @@ The schema was extracted using the `csvsql` command from the `csvkit` tools.
 
 ## Replication risks
 
-The following is straight from GPT.
+The following are straight from GPT.
+
+### Risks from replication
+
+
+Logical replication in PostgreSQL is a powerful feature that allows you to replicate specific tables from one database to another, potentially even between different PostgreSQL versions. However, like all replication methods, there are risks and considerations to be aware of:
+
+1. **Version Compatibility**: Although logical replication allows replication between different PostgreSQL versions, it's important to understand any breaking changes or compatibility issues between versions.
+
+2. **Schema Changes**: In a logical replication setup, schema changes are not automatically replicated. This means that any changes to the table structure (like adding or dropping columns) need to be manually performed on both the publisher and subscriber.
+
+3. **Write Load**: Logical replication increases the write load on the publishing database due to the need to write to the replication slot.
+
+4. **Replication Lag**: There's always the potential for replication lag. If the subscriber can't keep up with the changes on the publisher, there will be a delay in the data being replicated.
+
+5. **Conflict Resolution**: Logical replication doesn't have built-in conflict resolution. If data is modified on both the publisher and the subscriber, it might result in conflicts that need to be manually resolved.
+
+6. **Sequences**: If you are replicating tables with serial columns, the sequences generating the serial numbers are not replicated. This could lead to potential conflicts or overlaps in serial values.
+
+7. **DDL Operations**: Some DDL (Data Definition Language) operations can cause replication to fail, especially those that affect the replicated tables.
+
+8. **Monitoring and Maintenance**: Replication slots that are not actively being consumed can cause old WAL segments to be retained, leading to increased disk usage. Regular monitoring is essential to avoid running out of disk space.
+
+9. **Subscription Failures**: If a subscription fails, it may require manual intervention to restart or reinitialize, especially if there are issues like network outages.
+
+10. **Replication Filters**: If you're using replication filters (e.g., replicating only certain rows or columns), there's a risk of accidentally omitting important data. Additionally, filters add complexity to the replication setup.
+
+11. **Resource Consumption**: Logical replication can increase CPU and memory consumption, especially if there are many changes to replicate.
+
+12. **Security Concerns**: Data is sent in clear text unless SSL is configured. It's important to secure the connection between the publisher and subscriber to prevent data breaches.
+
+13. **Dependencies**: Tables with foreign key relationships or other dependencies might pose challenges. You need to ensure related tables are replicated in the correct order to maintain data integrity.
+
+14. **Backup and Recovery**: The backup and recovery strategy may need adjustments. For example, if you're relying on point-in-time recovery, the strategy might change due to the presence of replication slots.
+
+When considering logical replication in PostgreSQL, it's crucial to test thoroughly in a non-production environment first. This allows you to understand the nuances and potential pitfalls, ensuring a smoother deployment in a production setting.
+
+### Pausing replication
 
 Pausing replication in a PostgreSQL logical replication setup can be a strategic move in various scenarios like maintenance, schema changes, or handling outages. However, there are inherent risks and considerations:
 
