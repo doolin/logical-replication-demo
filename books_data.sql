@@ -1,9 +1,9 @@
 -- small schema example, helps clean up script
 
-INSERT INTO books(sku, title) VALUES
-  (1, 'Text for book 1'),
-  (2, 'Text for book 2'),
-  (3, 'Text for book 3'),
-  (4, 'Text for book 4'),
-  (5, 'Text for book 5')
+INSERT INTO books(sku, title, topic) VALUES
+  (31,'Practical Object Oriented Design in Ruby','technical'),
+  (22,'Great By Choice','leadership'),
+  (73,'Building Evolutionary Architectures','technical'),
+  (47,'Design Patterns in Ruby','technical'),
+  (58,'Scaling Teams','leadership')
 ;
