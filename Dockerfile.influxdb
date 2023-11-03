@@ -1,0 +1,15 @@
+# Use the latest InfluxDB image
+FROM influxdb:latest
+
+# Set environment variables for initial admin user and password
+# This does not seem to be working, GPT might be haliucinating.
+# ENV DOCKER_INFLUXDB_INIT_MODE=setup
+# ENV DOCKER_INFLUXDB_INIT_USERNAME=doolin
+# ENV DOCKER_INFLUXDB_INIT_PASSWORD=foobar
+# ENV DOCKER_INFLUXDB_INIT_ORG=inventium
+# ENV DOCKER_INFLUXDB_INIT_BUCKET=testem
+
+# After setting up, update the .zshrc with the token
+# provided after logging in.
+
+# No need to provide an explicit CMD or ENTRYPOINT as the base image provides it
