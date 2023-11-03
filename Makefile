@@ -40,6 +40,9 @@ DB_USER=postgres
 DB_NAME=postgres
 DB_PASSWORD=foobar
 
+pub:
+	@PGPASSWORD=$(DB_PASSWORD) psql -h localhost -p 5435 -U $(DB_USER) -d publisher @ $(DB_NAME)
+
 sub1:
 	@PGPASSWORD=$(DB_PASSWORD) psql -h localhost -p 5433 -U $(DB_USER) -d $(DB_NAME)
 

@@ -11,6 +11,8 @@ TODO:
 3. Have a another segment for full automated two pub/subs.
 4. Describe the makefile and scripts.
 
+## Manual pub/sub
+
 ## Semi-automated setup
 
 We're going to use an image named `subscriber` with containers named `subscriber1` and `subscriber2` for the entire exercise. The following procedure is a fast track, where many of the relevant commands are scripted:
