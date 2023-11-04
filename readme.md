@@ -283,6 +283,15 @@ tmux send-keys -t container-logs:0.1 'docker logs -f subscriber2' C-m
 tmux attach -t container-logs
 ```
 
+Logs for Influx and Grafana:
+```
+tmux new-session -d -s metrics-logs
+tmux split-window -h -t metrics-logs
+tmux send-keys -t metrics-logs:0.0 'docker logs -f pubmetrics' C-m
+tmux send-keys -t metrics-logs:0.1 'docker logs -f grafana' C-m
+tmux attach -t metrics-logs
+```
+
 
 
 ## Demo data using Goodreads CSV export
