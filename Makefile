@@ -48,3 +48,6 @@ sub1:
 
 sub2:
 	@PGPASSWORD=$(DB_PASSWORD) psql -h localhost -p 5434 -U $(DB_USER) -d $(DB_NAME)
+
+grafana:
+	@docker exec -it grafana /bin/sh
