@@ -13,6 +13,7 @@
 # 5. Set up monitoring on the docker images using InfluxDB and Grafana.
 
 # TODO: insert more, then update, then delete. Verify changes propagate to subscriber.
+# TODO: investigate how index creation works with replication.
 # TODO: due diligence on https://github.com/shayonj/pg_easy_replicate
 # TODO: due diliegnce on pglogical
 
