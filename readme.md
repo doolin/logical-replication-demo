@@ -4,14 +4,25 @@ The goal here is to better understand how Postgres logical replication works, an
 
 ![Architecture](/images/logical-replication-architecture.svg)
 
+
+**2023-11-04**
+- `./restart.sh`
+- `./replication.sh`
+- `./test.sh`
+- [Log into influx and check the data](http://localhost:8086/orgs/61386260b136e3c2/data-explorer?fluxScriptEditor)
+- [Log into grafana and check the data](http://localhost:3000/d/ee3f1dd1-31ef-4efa-a26a-a9d30fd6ebb0/testem-dashboard?orgId=1&viewPanel=1&editPanel=1)
+
 TODO:
 
 1. Rewrite this whole document.
 2. Have one section for a completely manual procedure for one pub/sub.
-3. Have a another segment for full automated two pub/subs.
+3. Have a another section for full automated two pub/subs.
 4. Describe the makefile and scripts.
 
-## Manual pub/sub
+## Smei-manual pub/sub
+
+The idea here is to build the system stepwise in order to help learn how everything works.
+
 
 ## Semi-automated setup
 

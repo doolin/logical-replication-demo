@@ -1,13 +1,19 @@
-# Use the latest InfluxDB image
 FROM influxdb:latest
 
-# Set environment variables for initial admin user and password
+
+# TODO: Set environment variables for initial admin user and password
 # This does not seem to be working, GPT might be haliucinating.
 # ENV DOCKER_INFLUXDB_INIT_MODE=setup
 # ENV DOCKER_INFLUXDB_INIT_USERNAME=doolin
 # ENV DOCKER_INFLUXDB_INIT_PASSWORD=foobar
 # ENV DOCKER_INFLUXDB_INIT_ORG=inventium
 # ENV DOCKER_INFLUXDB_INIT_BUCKET=testem
+
+# Convenient utilities
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends netcat-openbsd iputils-ping curl && \
+    rm -rf /var/lib/apt/lists/*
+
 
 # After setting up, update the .zshrc with the token
 # provided after logging in.
