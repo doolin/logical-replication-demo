@@ -1,5 +1,9 @@
 #!/bin/bash
 
+source ./ansi_colors.sh
+source ./helpers.sh
+infotext "Build and restart the subscriber containers..."
+
 IMAGE_NAME="pubsub"
 DOCKERFILE_PATH="."
 CONFIG_FILE_PATH="."
@@ -22,15 +26,12 @@ docker run -d --name publisher -p 5435:5432 -e POSTGRES_PASSWORD=foobar $IMAGE_N
 docker buildx build -t pubmetrics -f Dockerfile.influxdb .
 docker run -d --name pubmetrics -p 8086:8086 -v myInfluxVolume:/var/lib/influxdb2 pubmetrics
 docker buildx build -t grafana -f Dockerfile.grafana .
-# docker run -d -p 3000:3000 --name grafana --network pubsub_network -v grafana-storage:/var/lib/grafana grafana
 docker run -d -p 3000:3000 --name grafana -v grafana-storage:/var/lib/grafana grafana
 
 # Connect the InfluxDB container to the pubsub_network
 docker network ls | grep -q "pubsub_network" || docker network create pubsub_network
 docker network connect pubsub_network pubmetrics
 docker network connect pubsub_network grafana
-
-
 
 # Optional: Remove old Docker images to free up space
 # docker system prune -a

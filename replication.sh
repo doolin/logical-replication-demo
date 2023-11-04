@@ -36,13 +36,12 @@ run_psql() {
 }
 
 # Prepare the publisher database.
-run_psql -c "DROP DATABASE IF EXISTS $DB_NAME;"
+run_psql -c "DROP DATABASE IF EXISTS $DB_NAME;" 2&> /dev/null
 run_psql -c "CREATE DATABASE $DB_NAME;"
-run_psql -d "$DB_NAME" -f books_schema.sql # -a to echo all
+run_psql -f books_schema.sql -d "$DB_NAME" # -a to echo all
 run_psql -c "CREATE SEQUENCE books_id_seq ;" -d "$DB_NAME"
 run_psql -c "ALTER TABLE books ALTER COLUMN id SET DEFAULT nextval('books_id_seq');" -d "$DB_NAME"
 run_psql -c "\COPY books ("sku", "title", "topic") FROM './books_data.csv' DELIMITER ',' CSV HEADER;" -d "$DB_NAME"
-
 
 # Set up replication on the publisher database.
 run_psql -c "ALTER SYSTEM SET wal_level = logical;" -d "$DB_NAME"
@@ -58,14 +57,13 @@ run_psql -c "CREATE PUBLICATION leadership_pub FOR TABLE books where (topic = 'l
 run_psql -c "CREATE PUBLICATION technical_pub FOR TABLE books where (topic = 'technical');"  -d "$DB_NAME"
 # Check with SELECT * FROM pg_publication;
 
-# TODO: switch to container. Load up the goodreads export for fun.
-# psql -f ./goodreads_pub_schema.sql publisher
-# CSV_PATH="./goodreads_export-2023-10-17.csv"
-# # HEADER="$(<goodreads_header.txt)" # Save for future reference, very cool
-# HEADER=$(head -n 1 goodreads_export-2023-10-17.csv | sed 's/,/","/g; s/^/"/; s/$/"/')
-# psql -c "\COPY goodreads_books($HEADER) FROM '$CSV_PATH' DELIMITER ',' CSV HEADER;" publisher
+# TODO: unify schema
+run_psql -f ./goodreads_pub_schema.sql -d "$DB_NAME"
+CSV_PATH="./goodreads_export-2023-10-17.csv"
+HEADER=$(head -n 1 goodreads_export-2023-10-17.csv | sed 's/,/","/g; s/^/"/; s/$/"/')
+run_psql -c "\COPY goodreads_books($HEADER) FROM '$CSV_PATH' DELIMITER ',' CSV HEADER;" -d "$DB_NAME"
 
-# TODO: investigate how this works in more detail.
+# TODO: investigate how docker network operates in more detail.
 # create the network if it doesn't exist, then connect the containers to the network.
 docker network ls | grep -q "pubsub_network" || docker network create pubsub_network
 docker network connect pubsub_network publisher
