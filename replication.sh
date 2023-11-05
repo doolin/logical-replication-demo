@@ -17,13 +17,9 @@
 # TODO: due diligence on https://github.com/shayonj/pg_easy_replicate
 # TODO: due diliegnce on pglogical
 
-# Replication commands for the localhost publisher database.
-# dropdb publisher
-# createdb publisher
+# TODO: install pghero if possible.
 
-# Publisher
-# Reminder: -f loads a file, -c indicates a sql command to run.
-
+# Publisher variables
 PGPASSWORD="foobar"
 PG_HOST="localhost"
 PG_PORT="5435"
@@ -36,6 +32,7 @@ run_psql() {
 }
 
 # Prepare the publisher database.
+# Reminder: -f loads a file, -c indicates a sql command to run.
 run_psql -c "DROP DATABASE IF EXISTS $DB_NAME;" 2&> /dev/null
 run_psql -c "CREATE DATABASE $DB_NAME;"
 run_psql -f books_schema.sql -d "$DB_NAME" # -a to echo all

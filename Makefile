@@ -37,6 +37,9 @@ docker2:
 grafana:
 	@docker exec -it grafana /bin/bash
 
+publisher:
+	@docker exec -it publisher /bin/bash
+
 .PHONY: sub1 subs2 pub
 # psql from host
 DB_USER=postgres
