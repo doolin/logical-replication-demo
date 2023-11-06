@@ -8,6 +8,7 @@ GEM
       i18n (>= 1.8.11, < 2)
     i18n (1.14.1)
       concurrent-ruby (~> 1.0)
+    influxdb-client (2.9.0)
     json (2.6.3)
     language_server-protocol (3.17.0.3)
     parallel (1.23.0)
@@ -61,6 +62,7 @@ PLATFORMS
 
 DEPENDENCIES
   faker
+  influxdb-client
   pg
   rspec
   rubocop

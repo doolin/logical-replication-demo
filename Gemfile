@@ -3,6 +3,7 @@
 source 'https://rubygems.org'
 
 gem 'faker'
+gem 'influxdb-client'
 gem 'pg'
 gem 'rspec'
 gem 'rubocop'
