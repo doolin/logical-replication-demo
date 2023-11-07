@@ -19,6 +19,8 @@
 
 # TODO: install pghero if possible.
 
+# TODO: constrain postgres to very few connections, say, 2.
+
 # Publisher variables
 PGPASSWORD="foobar"
 PG_HOST="localhost"

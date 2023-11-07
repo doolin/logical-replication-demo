@@ -2,6 +2,7 @@
 # frozen_string_literal: true
 
 require 'influxdb-client'
+require 'time'
 
 # TODO: dig into how influx structures and stores data.
 # TODO: dig into how influx queries data.
@@ -20,7 +21,9 @@ class InfluxDBClient
                                     org: 'inventium',
                                     precision: InfluxDB2::WritePrecision::NANOSECOND,
                                     use_ssl: false)
+  end
 
+  def write_demo1
     write_api = @client.create_write_api
 
     (1..5).each do |i|
@@ -29,7 +32,10 @@ class InfluxDBClient
 
       puts "write point #{i}"
     end
+  end
 
+  def write_demo2
+    write_api = @client.create_write_api
     # Example data - replace with actual counts from your pg_locks query
     lock_data = [
       { mode: 'AccessExclusiveLock', count: 5 },
@@ -38,8 +44,9 @@ class InfluxDBClient
     ]
 
     # Construct the payload
+    # TODO: how big can the payload be?
     influx_payload = lock_data.map do |lock|
-      "lock_modes,host=my_host,db=my_db mode=\"#{lock[:mode]}\",lock_count=#{lock[:count]}"
+      "lock_modes,host=my_host,db=testem mode=\"#{lock[:mode]}\",lock_count=#{lock[:count]}"
     end.join("\n")
     puts influx_payload
 
@@ -55,12 +62,34 @@ class InfluxDBClient
 
     @client.write_point(measurement, data)
   end
+
+  def write_api
+    @client.create_write_api
+  end
+
+  def write
+    lock_modes = %w[AccessExclusiveLock RowShareLock]
+    lock_counts = (4..123).to_a
+    current_time = Time.now.to_i
+
+    2.times do
+      payload = \
+        "locks,host=my_host,db=testem mode=\"#{lock_modes.sample}\",lock_count=#{lock_counts.sample} #{current_time}"
+      write_api.write(data: payload, bucket: 'ruby_test', org: 'inventium')
+
+      puts payload
+      sleep 0.1
+    end
+  end
 end
 
 # Example usage:
 
 # client = InfluxDBClient.new(host: 'localhost', port: 8086, user: 'doolin', password: 'influxdb', bucket: 'ruby_test')
-InfluxDBClient.new(host: 'localhost', port: 8086, user: 'doolin', password: 'influxdb', bucket: 'ruby_test')
+client = InfluxDBClient.new(host: 'localhost', port: 8086, user: 'doolin', password: 'influxdb', bucket: 'ruby_test')
+client.write_demo1
+client.write_demo2
+client.write
 
 # client.write_point('my_measurement', { tag1: 'value1', tag2: 'value2' }, { field1: 123, field2: 'abc' })
 
