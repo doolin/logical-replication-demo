@@ -23,6 +23,23 @@ class InfluxDBClient
                                     use_ssl: false)
   end
 
+  # https://docs.influxdata.com/influxdb/v2/get-started/write/
+
+  def write
+    lock_modes = %w[AccessExclusiveLock RowShareLock]
+    lock_counts = (4..123).to_a
+    current_time = Time.now.to_i * 1_000_000_000
+
+    2.times do
+      payload = \
+        "locks,host=my_host,db=testem mode=\"#{lock_modes.sample}\",lock_count=#{lock_counts.sample} #{current_time}"
+      write_api.write(data: payload, bucket: 'ruby_test', org: 'inventium')
+
+      puts payload
+      sleep 0.1
+    end
+  end
+
   def write_demo1
     write_api = @client.create_write_api
 
@@ -53,6 +70,30 @@ class InfluxDBClient
     write_api.write(data: influx_payload, bucket: 'ruby_test', org: 'inventium')
   end
 
+  # Use the official documentation example
+  # https://docs.influxdata.com/influxdb/v2/get-started/write/
+  #
+  # measurement,tag_key1=tag_val1,tag_key2=tag_val2 field_key1="field_val1",field_key2=field_val2 timestamp
+  #
+  def write_demo3
+    lock_modes = %w[AccessExclusiveLock RowShareLock]
+    lock_counts = (4..123).to_a
+
+    100.times do
+      # TODO: ensure milliseconds are acquired.
+      current_time = Time.now.to_i * 1_000_000_000
+      # Change to do 100 of each lock mode.
+      payload = \
+        "locks,mode=#{lock_modes.sample} lock_count=#{lock_counts.sample} #{current_time}"
+      write_api.write(data: payload, bucket: 'ruby_test', org: 'inventium')
+
+      puts payload
+      sleep 2 # change to 0.1 once milliconds are acquired.
+    end
+
+    # write_api.write(data: influx_payload, bucket: 'ruby_test', org: 'inventium')
+  end
+
   def write_point(measurement, tags, fields, timestamp = nil)
     data = {
       values: fields,
@@ -66,30 +107,16 @@ class InfluxDBClient
   def write_api
     @client.create_write_api
   end
-
-  def write
-    lock_modes = %w[AccessExclusiveLock RowShareLock]
-    lock_counts = (4..123).to_a
-    current_time = Time.now.to_i
-
-    2.times do
-      payload = \
-        "locks,host=my_host,db=testem mode=\"#{lock_modes.sample}\",lock_count=#{lock_counts.sample} #{current_time}"
-      write_api.write(data: payload, bucket: 'ruby_test', org: 'inventium')
-
-      puts payload
-      sleep 0.1
-    end
-  end
 end
 
 # Example usage:
 
 # client = InfluxDBClient.new(host: 'localhost', port: 8086, user: 'doolin', password: 'influxdb', bucket: 'ruby_test')
 client = InfluxDBClient.new(host: 'localhost', port: 8086, user: 'doolin', password: 'influxdb', bucket: 'ruby_test')
-client.write_demo1
-client.write_demo2
-client.write
+# client.write_demo1
+# client.write_demo2
+client.write_demo3
+# client.write
 
 # client.write_point('my_measurement', { tag1: 'value1', tag2: 'value2' }, { field1: 123, field2: 'abc' })
 
