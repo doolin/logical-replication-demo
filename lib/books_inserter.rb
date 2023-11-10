@@ -4,7 +4,9 @@
 require 'pg'
 require 'faker'
 
-# This works well.
+# Insert books into the database at random intervals controlled
+# by the mean value of a Rayleigh distribution. This gives us a
+# high rate near the mean, but also a long tail of low rates.
 class BooksInserter
   def initialize
     @connection_params = {
@@ -42,6 +44,7 @@ class BooksInserter
     puts "Insert failed: #{e.message}"
   end
 
+  # Run the inserter indefinitely until killed.
   def run
     loop do
       insert_book
@@ -61,28 +64,3 @@ class BooksInserter
     (sigma * Math.sqrt(-2 * Math.log(1 - u)))
   end
 end
-
-# Daemon execution
-inserter = BooksInserter.new
-begin
-  inserter.run
-ensure
-  inserter.close_db_connection
-end
-
-# Main execution
-threads = []
-5.times do |i|
-  threads << Thread.new do
-    inserter = BooksInserter.new
-    begin
-      inserter.run
-    rescue StandardError => e
-      puts "Thread #{i} encountered an error: #{e.message}"
-    ensure
-      inserter.close_db_connection
-    end
-  end
-end
-
-threads.each(&:join) # This will cause the main thread to wait for all inserter threads to complete
