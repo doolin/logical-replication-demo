@@ -58,7 +58,6 @@ RSpec.describe InfluxDBClient do
 
   describe '#insert_demo' do
     let(:client) { described_class.new(host:, port:, bucket:, org:) }
-    # let(:write_api_mock) { instance_spy(InfluxDB2::Client::WriteApi) }
     let(:write_api_mock) { instance_spy(InfluxDB2::WriteApi) }
 
     before do
@@ -67,13 +66,15 @@ RSpec.describe InfluxDBClient do
     end
 
     it 'calls write on write_api with the correct data' do
+      count = 2
+
       # Perform the action before setting the expectation
-      silence_stream($stdout) do
-        client.insert_demo
-      end
+      silence_stream($stdout) { client.insert_demo(count) }
 
       # Use `have_received` to assert that `write` was called on the spy
-      expect(write_api_mock).to have_received(:write).with(hash_including(data: kind_of(String), bucket:, org:)).twice
+      expect(write_api_mock).to have_received(:write)
+        .with(hash_including(data: kind_of(String), bucket:, org:))
+        .exactly(count).times
     end
   end
 

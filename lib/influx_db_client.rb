@@ -49,8 +49,8 @@ class InfluxDBClient
   #
   # measurement,tag_key1=tag_val1,tag_key2=tag_val2 field_key1="field_val1",field_key2=field_val2 timestamp
   #
-  def insert_demo
-    2.times do
+  def insert_demo(count)
+    count.times do
       write_api.write(data: payload, bucket:, org:)
 
       puts payload
