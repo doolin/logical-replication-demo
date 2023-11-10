@@ -5,7 +5,17 @@ The goal here is to better understand how Postgres logical replication works, an
 ![Architecture](/images/logical-replication-architecture.svg)
 
 
+**2023-11-10**
+
+Here's a list of things on my mind. I don't have time to do them right now, or even
+plan them out in detail, but having them written out explicitly is helpful.
+
+- The overall point of the exercise is to run Rails queries and watch what happens in the entire system, particularly the database, and how the behavior propogates through the metrics.
+- Will need to generate some fairly burly synthetic data to be able to stress the system.
+
+
 **2023-11-04**
+
 - `./restart.sh`
 - `./replication.sh`
 - `./test.sh`

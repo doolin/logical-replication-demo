@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
+# https://github.com/influxdata/influxdb-client-ruby
 require 'influxdb-client'
 require 'time'
 
@@ -61,9 +62,6 @@ class InfluxDBClient
     client.create_write_api
   end
 end
-
-# client = InfluxDBClient.new(host: 'localhost', port: 8086, bucket: 'ruby_test', org: 'inventium')
-# client.insert_demo
 
 # __END__
 

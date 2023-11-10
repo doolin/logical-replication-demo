@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # require 'spec_helper'
-require_relative 'insert_influx'
+require_relative '../lib/influx_db_client'
 
 RSpec.describe InfluxDBClient do
   let(:host) { 'http://localhost' }
