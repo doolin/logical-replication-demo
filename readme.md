@@ -19,10 +19,11 @@ plan them out in detail, but having them written out explicitly is helpful.
 - `./restart.sh`
 - `./replication.sh`
 - `./test.sh`
+- `./exe/books_inserter.rb`
+- Watch the stats in the docker desktop tool.
+- `./exe/insert_db_client`
 - [Log into influx and check the data](http://localhost:8086/orgs/61386260b136e3c2/data-explorer?fluxScriptEditor)
 - [Log into grafana and check the data](http://localhost:3000/d/ee3f1dd1-31ef-4efa-a26a-a9d30fd6ebb0/testem-dashboard?orgId=1&viewPanel=1&editPanel=1)
-- Open a couple of terms and run `./inserter.rb`
-- Watch the stats in the docker desktop tool.
 
 TODO:
 
