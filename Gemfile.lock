@@ -65,6 +65,7 @@ DEPENDENCIES
   influxdb-client
   pg
   rspec
+  rspec-mocks
   rubocop
   rubocop-rspec
 
