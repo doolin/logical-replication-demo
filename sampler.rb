@@ -21,7 +21,7 @@ influxdb_host = 'localhost'
 influxdb_port = 8086
 influxdb_org = 'inventium'
 influxdb_bucket = 'pg_test'
-influxdb_token = ENV['INFLUX__LOCAL_TOKEN']
+influxdb_token = ENV.fetch('INFLUX__LOCAL_TOKEN', nil)
 
 # Function to query PostgreSQL and return locks
 def get_pg_locks(conn, pg_options)
