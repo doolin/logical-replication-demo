@@ -3,4 +3,3 @@ require:
 
 AllCops:
     NewCops: enable
-
