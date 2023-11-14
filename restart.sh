@@ -27,6 +27,10 @@ docker buildx build -t pubmetrics -f Dockerfile.influxdb .
 docker run -d --name pubmetrics -p 8086:8086 -v myInfluxVolume:/var/lib/influxdb2 pubmetrics
 docker buildx build -t grafana -f Dockerfile.grafana .
 docker run -d -p 3000:3000 --name grafana -v grafana-storage:/var/lib/grafana grafana
+# TODO: pull fluentbit image and run it
+# https://fluentbit.io/how-it-works/
+# docker buildx build -t fluentbit -f Dockerfile.fluentbit .
+# docker run -d --name fluentbit -p 24224:24224 -p 24224:24224/udp -v fluentbit-storage:/fluent-bit/etc fluentbit
 
 # TODO: metrics to put into influx
 # 1. docker stats from publisher, subscriber1, subscriber2

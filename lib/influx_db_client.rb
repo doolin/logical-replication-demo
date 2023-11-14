@@ -40,7 +40,7 @@ class InfluxDBClient
     # TODO: ensure milliseconds are acquired.
     current_time = Time.now.to_i * 1_000_000_000
 
-    # Change to do 100 of each lock mode.
+    # TODO: factor this string into a method.
     "locks,mode=#{lock_modes.sample} lock_count=#{lock_counts.sample} #{current_time}"
   end
 
@@ -51,15 +51,18 @@ class InfluxDBClient
   #
   def insert_demo(count)
     count.times do
-      write_api.write(data: payload, bucket:, org:)
-
-      puts payload
+      insert(payload)
       sleep 1.1 # change to 0.1 once milliconds are acquired.
     end
   end
 
+  def insert(payload)
+    write_api.write(data: payload)
+    puts payload
+end
+
   def write_api
-    client.create_write_api
+    @write_api ||= client.create_write_api
   end
 end
 
