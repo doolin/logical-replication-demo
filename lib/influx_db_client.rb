@@ -59,7 +59,7 @@ class InfluxDBClient
   def insert(payload)
     write_api.write(data: payload)
     puts payload
-end
+  end
 
   def write_api
     @write_api ||= client.create_write_api

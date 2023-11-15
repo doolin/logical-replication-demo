@@ -22,6 +22,8 @@ class PGSampler
   def initialize
     @pg_options = PG_OPTIONS
 
+    @terminate = false
+
     # TODO: remove as many of these as possible.
     @influxdb_host = 'localhost'
     @influxdb_port = 8086
@@ -34,17 +36,33 @@ class PGSampler
     'locks,mode=%<lock_modes>s lock_count=%<lock_counts>s %<current_time>s'
   end
 
-  def run
+  # There are a couple of ways to loop this. One is to loop outside
+  # the connection, which will open a new connection for each loop.
+  # Another is to loop inside the connection, which will keep the
+  # connection open for the duration of the loop. The latter is
+  # preferable for performance reasons. The connection is closed
+  # automatically when the block exits. Which to use depends on what
+  # we want test.
+  def run # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     PG::Connection.open(pg_options) do |conn|
-      current_time = Time.now.to_f * 1_000_000_000
-      get_pg_locks(conn).each do |lock|
-        payload = format(influx_query, lock_modes: lock['mode'], lock_counts: lock['lock_count'],
-                                       current_time: current_time.to_i)
-        @influx_client.insert(payload)
+      loop do
+        break if @terminate
+
+        current_time = (Time.now.to_f * 1_000_000_000).to_i
+        get_pg_locks(conn).each do |lock|
+          payload = format(influx_query, lock_modes: lock['mode'], lock_counts: lock['lock_count'],
+                                         current_time:)
+          @influx_client.insert(payload)
+        end
+        sleep 0.1
       end
     end
   rescue PG::Error => e
     puts "Unable to connect to PostgreSQL: #{e.message}"
+  end
+
+  def stop
+    @terminate = true
   end
 
   private
