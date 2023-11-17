@@ -62,3 +62,47 @@ docker network connect pubsub_network grafana
 # docker system prune -a
 
 echo "Containers ${CONTAINERS[@]} have been updated."
+
+
+# TODO: hook parameterization.
+# DEFAULT_MEMORY="512m"
+# MEMORY=$DEFAULT_MEMORY
+
+# # Function to show help
+# show_help() {
+#     echo "Usage: $0 [options]"
+#     echo "Options:"
+#     echo "  -m <memory>    Set the memory limit for Docker (e.g., 256m, 1g)"
+#     echo "  -h             Display this help and exit"
+# }
+
+# # Process command-line options
+# while getopts ":hm:" opt; do
+#     case ${opt} in
+#         h )
+#             show_help
+#             exit 0
+#             ;;
+#         m )
+#             MEMORY="${OPTARG}"
+#             # Check if the provided memory ends with a letter (b, k, m, g)
+#             if [[ ! "$MEMORY" =~ [a-zA-Z]$ ]]; then
+#                 MEMORY="${MEMORY}m"
+#             fi
+#             ;;
+#         \? )
+#             echo "Invalid option: -$OPTARG" >&2
+#             show_help
+#             exit 1
+#             ;;
+#         : )
+#             echo "Option -$OPTARG requires an argument." >&2
+#             exit 1
+#             ;;
+#     esac
+# done
+
+# echo "Memory allocated for Docker: $MEMORY"
+
+# # Example usage in a Docker command
+# # docker run -m $MEMORY your_docker_image
