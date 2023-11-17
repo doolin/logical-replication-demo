@@ -5,6 +5,16 @@ The goal here is to better understand how Postgres logical replication works, an
 ![Architecture](/images/logical-replication-architecture.svg)
 
 
+**2023-11-17**
+
+Do the following steps to replicate set up for benchmarking:
+
+1. `./restart.sh`
+1. `./replication.sh`
+1. `./test.sh`
+1. `./pgbench.sh`
+
+
 **2023-11-10**
 
 Here's a list of things on my mind. I don't have time to do them right now, or even
