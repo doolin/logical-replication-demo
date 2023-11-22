@@ -68,6 +68,7 @@ docker network ls | grep -q "pubsub_network" || docker network create pubsub_net
 docker network connect pubsub_network publisher
 docker network connect pubsub_network subscriber1
 docker network connect pubsub_network subscriber2
+# docker network connect pubsub_network telegraf
 
 # Replication commands for the Docker subscriber database.
 # Create subscriber1 database
