@@ -5,14 +5,19 @@ The goal here is to better understand how Postgres logical replication works, an
 ![Architecture](/images/logical-replication-architecture.svg)
 
 
-**2023-11-17**
+**2023-11-22**
 
 Do the following steps to replicate set up for benchmarking:
 
 1. `./restart.sh`
 1. `./replication.sh`
 1. `./test.sh`
+1. `./exe/pg_sampler.rb`
 1. `./pgbench.sh`
+1. Watch the stats in the docker desktop tool.
+1. [Log into influx and check the data](http://localhost:8086/orgs/61386260b136e3c2/data-explorer?fluxScriptEditor)
+1. [Log into grafana and check the data](http://localhost:3000/d/ee3f1dd1-31ef-4efa-a26a-a9d30fd6ebb0/testem-dashboard?orgId=1&viewPanel=1&editPanel=1)
+
 
 
 **2023-11-10**
@@ -304,6 +309,14 @@ Some useful commands:
 -  ensure the postgres versions are compatible; consider running the same versions of postgres for both publisher and subscriber
 - On the published, check the replication table: `select * from pg_stat_replication;`
 - Check the subscription on the publisher with `select * from pg_stat_replication;`
+- Check the environment variables in the container:
+    ```
+    docker exec -it telegraf /bin/sh
+    echo $INFLUX_LOCAL_TOKEN
+    echo $INFLUX_LOCAL_ORG
+    echo $INFLUX_LOCAL_BUCKET
+    ```
+
 
 #### Container logging
 

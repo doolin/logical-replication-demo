@@ -7,7 +7,7 @@ infotext "Build and restart the subscriber containers..."
 IMAGE_NAME="pubsub"
 DOCKERFILE_PATH="."
 CONFIG_FILE_PATH="."
-CONTAINERS=("subscriber1" "subscriber2" "publisher" "pubmetrics" "grafana")
+CONTAINERS=("subscriber1" "subscriber2" "publisher" "pubmetrics" "grafana" "telegraf")
 
 for CONTAINER_NAME in "${CONTAINERS[@]}"; do
   if docker ps -a | grep -qw $CONTAINER_NAME; then
@@ -33,6 +33,23 @@ docker buildx build -t pubmetrics -f Dockerfile.influxdb .
 docker run -d --name pubmetrics -p 8086:8086 -v myInfluxVolume:/var/lib/influxdb2 pubmetrics
 docker buildx build -t grafana -f Dockerfile.grafana .
 docker run -d --name grafana -p 3000:3000 -v grafana-storage:/var/lib/grafana grafana
+
+# Telegraf
+
+localconf="/$HOME/src/logical-replication-demo/telegraf.conf"
+docker buildx build -t telegraf -f Dockerfile.telegraf .
+# Apparently, the network needs to be created before the container is run.
+docker network ls | grep -q "pubsub_network" || docker network create pubsub_network
+# docker volume create docker_sock
+# docker run -d --name telegraf -v docker_sock:/var/run/docker.sock -v $localconf:/etc/telegraf/telegraf.conf:ro --net pubsub_network telegraf
+# docker run -d --name telegraf -v /Users/daviddoolin/.docker/run/docker.sock:/var/run/docker.sock -v $localconf:/etc/telegraf/telegraf.conf:ro --net=pubsub_network telegraf
+docker run -d --name telegraf \
+  -e INFLUX_LOCAL_TOKEN=$INFLUX_LOCAL_TOKEN \
+  -e INFLUX_LOCAL_ORG=$INFLUX_LOCAL_ORG \
+  -e INFLUX_LOCAL_BUCKET=$INFLUX_LOCAL_BUCKET \
+  -v /var/run/docker.sock:/var/run/docker.sock -v $localconf:/etc/telegraf/telegraf.conf:ro --net=pubsub_network telegraf
+
+
 # TODO: pull fluentbit image and run it
 # https://fluentbit.io/how-it-works/
 # docker buildx build -t fluentbit -f Dockerfile.fluentbit .

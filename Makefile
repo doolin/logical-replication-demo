@@ -26,7 +26,7 @@ clean:
 
 .PHONY: all svg png clean
 
-.PHONY: docker1 docker2
+.PHONY: docker1 docker2 publisher telegraf
 # Open bash shell on containers
 docker1:
 	@docker exec -it subscriber1 /bin/bash
@@ -39,6 +39,9 @@ grafana:
 
 publisher:
 	@docker exec -it publisher /bin/bash
+
+telegraf:
+	@docker exec -it telegraf /bin/bash
 
 .PHONY: sub1 subs2 pub
 # psql from host
