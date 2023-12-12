@@ -1,3 +1,4 @@
 node_modules/*
 *.png
 pg_hba.conf
+influxdb-datasource.yml
