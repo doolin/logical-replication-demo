@@ -4,6 +4,44 @@ The goal here is to better understand how Postgres logical replication works, an
 
 ![Architecture](/images/logical-replication-architecture.svg)
 
+---
+
+## Grafana
+
+For a first build or a complete rebuild, run `./cleanup.sh` and remove all of the images. This does not remove volumes.
+
+Then:
+- `docker volume rm grafana-storage`
+- `./restart.sh`
+- `./replication.sh`
+
+Hooks up to InfluxDB. Here's the process:
+
+1. connections --> Data sources --> InfluxDB
+1. Set **Query language** to `Flux`.
+1. URL: `http://pubmetrics:8086`
+1. Organization: `inventium`
+1. Token: paste in the token from Influx.
+
+Run these to provision some data into influx:
+
+- `./pgbench.sh`
+- `./exe/pg_sampler.rb`
+`
+Once Influx is running, the Flux query in Influx can be copied to a Grafana dashboard and used as-is. Here is one which works:
+
+```from(bucket: "ruby_test")
+  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+  |> filter(fn: (r) => r["_measurement"] == "locks")
+  |> filter(fn: (r) => r["_field"] == "lock_count")
+  |> filter(fn: (r) => r["mode"] == "AccessShareLock" or r["mode"] == "ExclusiveLock" or r["mode"] == "RowExclusiveLock" or r["mode"] == "ShareLock" or r["mode"] == "ShareUpdateExclusiveLock")
+  ```
+
+**Note** make sure the influxDB token is correct.
+
+Once a dashboard is saved, the autorefresh can be set.
+
+---
 
 **2023-11-22**
 
@@ -47,7 +85,7 @@ TODO:
 3. Have a another section for full automated two pub/subs.
 4. Describe the makefile and scripts.
 
-## Smei-manual pub/sub
+## Semi-manual pub/sub
 
 The idea here is to build the system stepwise in order to help learn how everything works.
 

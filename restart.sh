@@ -28,14 +28,26 @@ docker run -d --name subscriber1 -m $MEMORY --memory-swap $MEMORY -p 5433:5432 -
 docker run -d --name subscriber2 -m $MEMORY --memory-swap $MEMORY -p 5434:5432 -e POSTGRES_PASSWORD=foobar $IMAGE_NAME
 docker run -d --name publisher   -m $MEMORY --memory-swap $MEMORY -p 5435:5432 -e POSTGRES_PASSWORD=foobar $IMAGE_NAME
 
-# Pull from Docker Hub.
+
+# InfluxDB
+# TODO: change the volume name to influxdb-storage
 docker buildx build -t pubmetrics -f Dockerfile.influxdb .
 docker run -d --name pubmetrics -p 8086:8086 -v myInfluxVolume:/var/lib/influxdb2 pubmetrics
+
+
+# Grafana
+m4 -DINFLUXDB_TOKEN=$INFLUX_LOCAL_TOKEN influxdb-datasource.m4 > influxdb-datasource.yml
 docker buildx build -t grafana -f Dockerfile.grafana .
-docker run -d --name grafana -p 3000:3000 -v grafana-storage:/var/lib/grafana grafana
+docker run -d --name grafana \
+  -p 3000:3000 \
+  -v grafana-storage:/var/lib/grafana \
+  -v ./influxdb-datasource.yml:/etc/grafana/provisioning/datasources/influxdb-datasource.yml \
+  grafana
+# rm influxdb-datasource.yml
+
 
 # Telegraf
-
+# TODO: display docker stats in influx
 localconf="/$HOME/src/logical-replication-demo/telegraf.conf"
 docker buildx build -t telegraf -f Dockerfile.telegraf .
 # Apparently, the network needs to be created before the container is run.
@@ -45,7 +57,9 @@ docker run -d --name telegraf \
   -e INFLUX_LOCAL_TOKEN=$INFLUX_LOCAL_TOKEN \
   -e INFLUX_LOCAL_ORG=$INFLUX_LOCAL_ORG \
   -e INFLUX_LOCAL_BUCKET=$INFLUX_LOCAL_BUCKET \
-  -v /var/run/docker.sock:/var/run/docker.sock -v $localconf:/etc/telegraf/telegraf.conf:ro --net=pubsub_network telegraf
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v $localconf:/etc/telegraf/telegraf.conf:ro \
+  --net=pubsub_network telegraf
 
 
 # TODO: pull fluentbit image and run it
@@ -53,17 +67,6 @@ docker run -d --name telegraf \
 # docker buildx build -t fluentbit -f Dockerfile.fluentbit .
 # docker run -d --name fluentbit -p 24224:24224 -p 24224:24224/udp -v fluentbit-storage:/fluent-bit/etc fluentbit
 
-# Pull logstash image and run it
-# docker pull docker.elastic.co/logstash/logstash:7.9.2
-# docker run -d --name logstash -p 5000:5000 -v logstash-storage:/usr/share/logstash/pipeline docker.elastic.co/logstash/logstash:7.9.2
-
-# Pull elasticsearch image and run it
-# docker pull docker.elastic.co/elasticsearch/elasticsearch:7.9.2
-# docker run -d --name elasticsearch -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:7.9.2
-
-# Pull kibana image and run it
-# docker pull docker.elastic.co/kibana/kibana:7.9.2
-# docker run -d --name kibana -p 5601:5601 docker.elastic.co/kibana/kibana:7.9.2
 
 # TODO: metrics to put into influx
 # 1. docker stats from publisher, subscriber1, subscriber2
