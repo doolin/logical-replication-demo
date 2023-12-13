@@ -1,13 +1,14 @@
 FROM influxdb:latest
 
 
-# TODO: Set environment variables for initial admin user and password
-# This does not seem to be working, GPT might be haliucinating.
-# ENV DOCKER_INFLUXDB_INIT_MODE=setup
-# ENV DOCKER_INFLUXDB_INIT_USERNAME=doolin
-# ENV DOCKER_INFLUXDB_INIT_PASSWORD=foobar
-# ENV DOCKER_INFLUXDB_INIT_ORG=inventium
-# ENV DOCKER_INFLUXDB_INIT_BUCKET=testem
+# The following provides initial login credentials,
+# and only works if the volume is empty. To reset these
+# credentials, delete the volume and restart the container.
+ENV DOCKER_INFLUXDB_INIT_MODE=setup
+ENV DOCKER_INFLUXDB_INIT_USERNAME=dave
+ENV DOCKER_INFLUXDB_INIT_PASSWORD=foobar123
+ENV DOCKER_INFLUXDB_INIT_ORG=inventium
+ENV DOCKER_INFLUXDB_INIT_BUCKET=ruby_test
 
 # Convenient utilities
 RUN apt-get update && \
