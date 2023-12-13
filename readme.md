@@ -31,15 +31,24 @@ Run these to provision some data into influx:
 Once Influx is running, the Flux query in Influx can be copied to a Grafana dashboard and used as-is. Here is one which works:
 
 ```from(bucket: "ruby_test")
-  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
-  |> filter(fn: (r) => r["_measurement"] == "locks")
-  |> filter(fn: (r) => r["_field"] == "lock_count")
-  |> filter(fn: (r) => r["mode"] == "AccessShareLock" or r["mode"] == "ExclusiveLock" or r["mode"] == "RowExclusiveLock" or r["mode"] == "ShareLock" or r["mode"] == "ShareUpdateExclusiveLock")
-  ```
+|> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+|> filter(fn: (r) => r["_measurement"] == "locks")
+|> filter(fn: (r) => r["_field"] == "lock_count")
+|> filter(fn: (r) => r["mode"] == "AccessShareLock" or r["mode"] == "ExclusiveLock" or r["mode"] == "RowExclusiveLock" or r["mode"] == "ShareLock" or r["mode"] == "ShareUpdateExclusiveLock")
+```
 
 **Note** make sure the influxDB token is correct.
 
 Once a dashboard is saved, the autorefresh can be set.
+
+## InfluxDB
+
+1. Run `./cleanup.sh`
+1. remove the volume
+1. restart.sh
+1. replicate.sh
+
+Basically the whole thing worked first time I tried it.
 
 ---
 
@@ -84,6 +93,11 @@ TODO:
 2. Have one section for a completely manual procedure for one pub/sub.
 3. Have a another section for full automated two pub/subs.
 4. Describe the makefile and scripts.
+5. Consider rewriting as a toolbox of different fun things people can do.
+6. Monitor container stats in Grafana, creating a multi-paned dashboard.
+7. Monitor other database values than locks, add to dashboard.
+8. Provision grafana queries via API.
+
 
 ## Semi-manual pub/sub
 

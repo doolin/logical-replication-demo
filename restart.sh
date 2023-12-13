@@ -32,7 +32,10 @@ docker run -d --name publisher   -m $MEMORY --memory-swap $MEMORY -p 5435:5432 -
 # InfluxDB
 # TODO: change the volume name to influxdb-storage
 docker buildx build -t pubmetrics -f Dockerfile.influxdb .
-docker run -d --name pubmetrics -p 8086:8086 -v myInfluxVolume:/var/lib/influxdb2 pubmetrics
+docker run -d --name pubmetrics \
+  -p 8086:8086 \
+  -v influxdb-storage:/var/lib/influxdb2 \
+  pubmetrics
 
 
 # Grafana
