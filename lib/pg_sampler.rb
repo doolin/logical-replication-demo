@@ -4,20 +4,13 @@
 require 'pg'
 require 'net/http'
 require 'uri'
+require_relative 'pg_options'
 require_relative 'influx_db_client'
 
 # Minimal example of sampling PostgreSQL locks and writing to InfluxDB.
 class PGSampler
   # TODO: clean up attr_readers, not all of them are needed.
   attr_reader :pg_options, :influxdb_host, :influxdb_port, :influxdb_org, :influxdb_bucket
-
-  PG_OPTIONS = {
-    host: 'localhost',
-    dbname: 'publisher',
-    user: 'postgres',
-    password: 'foobar',
-    port: '5435'
-  }.freeze
 
   def initialize
     @pg_options = PG_OPTIONS
