@@ -26,19 +26,31 @@ class PGBench
     @options = options
   end
 
-  def run_default
-    bench_sys(default)
+  def run
+    bench_sys(pgbench)
   end
 
   def bench_sys(cmd)
     system(cmd)
   end
 
-  def default
-    "PGPASSWORD=foobar pgbench -h #{HOST} -p #{PORT} -U #{PG_USER} -T #{time_in_secongs} -c #{CLIENTS} -j #{THREADS} #{DB_NAME}"
+  def pgbench
+    "PGPASSWORD=foobar pgbench -h #{HOST} -p #{PORT} -U #{PG_USER} -s #{scale} -T #{time_in_secongs} -c #{clients} -j #{threads} #{DB_NAME}"
   end
 
   def time_in_secongs
     options[:duration] || DURATION
+  end
+
+  def scale
+    options[:scale] || SCALE
+  end
+
+  def clients
+    options[:clients] || CLIENTS
+  end
+
+  def threads
+    options[:threads] || THREADS
   end
 end
