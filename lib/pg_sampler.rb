@@ -8,6 +8,11 @@ require_relative 'pg_options'
 require_relative 'influx_db_client'
 
 # Minimal example of sampling PostgreSQL locks and writing to InfluxDB.
+#
+# Invoke ./exe/pg_sampler.rb to run it. It will write the influx query to
+# stdout and continnuously scroll in the terminal. Could be redirected to
+# /dev/null if desired. Could also be run in the background, just beware
+# there is no internal stopping criteria, so it will run until killed.
 class PGSampler
   # TODO: clean up attr_readers, not all of them are needed.
   attr_reader :pg_options, :influxdb_host, :influxdb_port, :influxdb_org, :influxdb_bucket
