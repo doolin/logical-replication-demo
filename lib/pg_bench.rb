@@ -3,13 +3,13 @@
 require 'pg'
 require_relative 'pg_options'
 
+# Driver class for pgbench
+#
 # I think there are going to be two classes here, maybe three.
 # One class will configure a pgbench command to pass to system.
 # Another class will run the pgbench command, while checking for
 # benchmark initialization before running the command.
 # Will need a class to create and run experiments.
-
-# Driver class for pgbench
 class PGBench
   attr_accessor :options
 

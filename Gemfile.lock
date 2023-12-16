@@ -57,6 +57,7 @@ GEM
       rubocop-factory_bot (~> 2.22)
     ruby-progressbar (1.13.0)
     unicode-display_width (2.5.0)
+    yard (0.9.34)
 
 PLATFORMS
   arm64-darwin-22
@@ -70,6 +71,7 @@ DEPENDENCIES
   rspec-mocks
   rubocop
   rubocop-rspec
+  yard
 
 BUNDLED WITH
    2.4.10
