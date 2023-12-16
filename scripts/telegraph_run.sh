@@ -20,6 +20,6 @@ docker run -d --name telegraf \
   -e INFLUX_LOCAL_TOKEN=$INFLUX_LOCAL_TOKEN \
   -e INFLUX_LOCAL_ORG=$INFLUX_LOCAL_ORG \
   -e INFLUX_LOCAL_BUCKET=$INFLUX_LOCAL_BUCKET \
-  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v /var/run/docker.sock.raw:/var/run/docker.sock \
   -v $localconf:/etc/telegraf/telegraf.conf:ro \
   --net=pubsub_network telegraf

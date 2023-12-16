@@ -32,6 +32,9 @@ source ./scripts/influx_run.sh
 # Grafana
 source ./scripts/grafana_run.sh
 
+# This should be removed from the repo once the container is running.
+# rm influxdb-datasource.yml
+
 # Telegraf from Dockerfile.telegraf
 source ./scripts/telegraph_run.sh
 
