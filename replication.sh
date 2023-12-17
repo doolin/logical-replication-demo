@@ -40,7 +40,7 @@ run_psql -c "CREATE DATABASE $DB_NAME;"
 run_psql -f books_schema.sql -d "$DB_NAME" # -a to echo all
 run_psql -c "CREATE SEQUENCE books_id_seq ;" -d "$DB_NAME"
 run_psql -c "ALTER TABLE books ALTER COLUMN id SET DEFAULT nextval('books_id_seq');" -d "$DB_NAME"
-run_psql -c "\COPY books ("sku", "title", "topic") FROM './books_data.csv' DELIMITER ',' CSV HEADER;" -d "$DB_NAME"
+run_psql -c "\COPY books ("sku", "title", "topic") FROM './data/books_data.csv' DELIMITER ',' CSV HEADER;" -d "$DB_NAME"
 
 # Set up replication on the publisher database.
 run_psql -c "ALTER SYSTEM SET wal_level = logical;" -d "$DB_NAME"
@@ -58,8 +58,8 @@ run_psql -c "CREATE PUBLICATION technical_pub FOR TABLE books where (topic = 'te
 
 # TODO: unify schema
 run_psql -f ./goodreads_pub_schema.sql -d "$DB_NAME"
-CSV_PATH="./goodreads_export-2023-10-17.csv"
-HEADER=$(head -n 1 goodreads_export-2023-10-17.csv | sed 's/,/","/g; s/^/"/; s/$/"/')
+CSV_PATH="./data/goodreads_export-2023-10-17.csv"
+HEADER=$(head -n 1 $CSV_PATH | sed 's/,/","/g; s/^/"/; s/$/"/')
 run_psql -c "\COPY goodreads_books($HEADER) FROM '$CSV_PATH' DELIMITER ',' CSV HEADER;" -d "$DB_NAME"
 
 # TODO: investigate how docker network operates in more detail.
