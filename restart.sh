@@ -22,7 +22,7 @@ else
     MEMORY="512m"
 fi
 
-# Locally defined Docker file.
+# PostgresQL databases
 docker buildx build . -t $IMAGE_NAME # -f $DOCKERFILE_PATH .
 docker run -d --name subscriber1 -m $MEMORY --memory-swap $MEMORY -p 5433:5432 -e POSTGRES_PASSWORD=foobar $IMAGE_NAME
 docker run -d --name subscriber2 -m $MEMORY --memory-swap $MEMORY -p 5434:5432 -e POSTGRES_PASSWORD=foobar $IMAGE_NAME
@@ -30,7 +30,6 @@ docker run -d --name publisher   -m $MEMORY --memory-swap $MEMORY -p 5435:5432 -
 
 
 # InfluxDB
-# TODO: change the volume name to influxdb-storage
 docker buildx build -t pubmetrics -f Dockerfile.influxdb .
 docker run -d --name pubmetrics \
   -p 8086:8086 \
@@ -39,15 +38,17 @@ docker run -d --name pubmetrics \
 
 
 # Grafana
+# Some m4 magic to avoid committing token to repo while still
+# having the convenience of the configuration file.
 m4 -DINFLUXDB_TOKEN=$INFLUX_LOCAL_TOKEN influxdb-datasource.m4 > influxdb-datasource.yml
+
 docker buildx build -t grafana -f Dockerfile.grafana .
 docker run -d --name grafana \
   -p 3000:3000 \
   -v grafana-storage:/var/lib/grafana \
   -v ./influxdb-datasource.yml:/etc/grafana/provisioning/datasources/influxdb-datasource.yml \
   grafana
-# rm influxdb-datasource.yml
-
+rm influxdb-datasource.yml
 
 # Telegraf
 # TODO: display docker stats in influx

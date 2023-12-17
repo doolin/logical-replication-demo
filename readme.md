@@ -6,6 +6,10 @@ The goal here is to better understand how Postgres logical replication works, an
 
 ---
 
+
+Running the slides: `npx @marp-team/marp-cli@latest -s deck/`
+---
+
 ## Grafana
 
 For a first build or a complete rebuild, run `./cleanup.sh` and remove all of the images. This does not remove volumes.
