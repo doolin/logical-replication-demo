@@ -34,7 +34,8 @@ Run these to provision some data into influx:
 `
 Once Influx is running, the Flux query in Influx can be copied to a Grafana dashboard and used as-is. Here is one which works:
 
-```from(bucket: "ruby_test")
+```
+from(bucket: "ruby_test")
 |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
 |> filter(fn: (r) => r["_measurement"] == "locks")
 |> filter(fn: (r) => r["_field"] == "lock_count")
