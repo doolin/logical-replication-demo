@@ -48,23 +48,9 @@ docker run -d --name grafana \
   -v grafana-storage:/var/lib/grafana \
   -v ./influxdb-datasource.yml:/etc/grafana/provisioning/datasources/influxdb-datasource.yml \
   grafana
-rm influxdb-datasource.yml
 
-# Telegraf
-# TODO: display docker stats in influx
-localconf="/$HOME/src/logical-replication-demo/telegraf.conf"
-docker buildx build -t telegraf -f Dockerfile.telegraf .
-# Apparently, the network needs to be created before the container is run.
-docker network ls | grep -q "pubsub_network" || docker network create pubsub_network
-# TODO: constrain memory.
-docker run -d --name telegraf \
-  -e INFLUX_LOCAL_TOKEN=$INFLUX_LOCAL_TOKEN \
-  -e INFLUX_LOCAL_ORG=$INFLUX_LOCAL_ORG \
-  -e INFLUX_LOCAL_BUCKET=$INFLUX_LOCAL_BUCKET \
-  -v /var/run/docker.sock:/var/run/docker.sock \
-  -v $localconf:/etc/telegraf/telegraf.conf:ro \
-  --net=pubsub_network telegraf
-
+# Telegraf from Dockerfile.telegraf
+source ./scripts/telegraph_run.sh
 
 # TODO: pull fluentbit image and run it
 # https://fluentbit.io/how-it-works/
