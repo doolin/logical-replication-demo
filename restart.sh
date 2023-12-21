@@ -1,12 +1,13 @@
 #!/bin/bash
 
+# TODO: metrics to put into influx
+# 1. docker stats from publisher, subscriber1, subscriber2
+# 2. database stats for publisher, subscriber1, subscriber2
+
 source ./ansi_colors.sh
 source ./helpers.sh
 infotext "Build and restart the subscriber containers..."
 
-IMAGE_NAME="pubsub"
-DOCKERFILE_PATH="."
-CONFIG_FILE_PATH="."
 CONTAINERS=("subscriber1" "subscriber2" "publisher" "pubmetrics" "grafana" "telegraf")
 
 for CONTAINER_NAME in "${CONTAINERS[@]}"; do
@@ -22,45 +23,18 @@ else
     MEMORY="512m"
 fi
 
-# PostgresQL databases
-docker buildx build . -t $IMAGE_NAME # -f $DOCKERFILE_PATH .
-docker run -d --name subscriber1 -m $MEMORY --memory-swap $MEMORY -p 5433:5432 -e POSTGRES_PASSWORD=foobar $IMAGE_NAME
-docker run -d --name subscriber2 -m $MEMORY --memory-swap $MEMORY -p 5434:5432 -e POSTGRES_PASSWORD=foobar $IMAGE_NAME
-docker run -d --name publisher   -m $MEMORY --memory-swap $MEMORY -p 5435:5432 -e POSTGRES_PASSWORD=foobar $IMAGE_NAME
-
+# PostgresQL
+source ./scripts/postgres_run.sh
 
 # InfluxDB
-docker buildx build -t pubmetrics -f Dockerfile.influxdb .
-docker run -d --name pubmetrics \
-  -p 8086:8086 \
-  -v influxdb-storage:/var/lib/influxdb2 \
-  pubmetrics
-
+source ./scripts/influx_run.sh
 
 # Grafana
-# Some m4 magic to avoid committing token to repo while still
-# having the convenience of the configuration file.
-m4 -DINFLUXDB_TOKEN=$INFLUX_LOCAL_TOKEN influxdb-datasource.m4 > influxdb-datasource.yml
-
-docker buildx build -t grafana -f Dockerfile.grafana .
-docker run -d --name grafana \
-  -p 3000:3000 \
-  -v grafana-storage:/var/lib/grafana \
-  -v ./influxdb-datasource.yml:/etc/grafana/provisioning/datasources/influxdb-datasource.yml \
-  grafana
+source ./scripts/grafana_run.sh
 
 # Telegraf from Dockerfile.telegraf
 source ./scripts/telegraph_run.sh
 
-# TODO: pull fluentbit image and run it
-# https://fluentbit.io/how-it-works/
-# docker buildx build -t fluentbit -f Dockerfile.fluentbit .
-# docker run -d --name fluentbit -p 24224:24224 -p 24224:24224/udp -v fluentbit-storage:/fluent-bit/etc fluentbit
-
-
-# TODO: metrics to put into influx
-# 1. docker stats from publisher, subscriber1, subscriber2
-# 2. database stats for publisher, subscriber1, subscriber2
 # Connect the InfluxDB container to the pubsub_network
 docker network ls | grep -q "pubsub_network" || docker network create pubsub_network
 docker network connect pubsub_network pubmetrics
@@ -69,48 +43,4 @@ docker network connect pubsub_network grafana
 # Optional: Remove old Docker images to free up space
 # docker system prune -a
 
-echo "Containers ${CONTAINERS[@]} have been updated."
-
-
-# TODO: hook parameterization.
-# DEFAULT_MEMORY="512m"
-# MEMORY=$DEFAULT_MEMORY
-
-# # Function to show help
-# show_help() {
-#     echo "Usage: $0 [options]"
-#     echo "Options:"
-#     echo "  -m <memory>    Set the memory limit for Docker (e.g., 256m, 1g)"
-#     echo "  -h             Display this help and exit"
-# }
-
-# # Process command-line options
-# while getopts ":hm:" opt; do
-#     case ${opt} in
-#         h )
-#             show_help
-#             exit 0
-#             ;;
-#         m )
-#             MEMORY="${OPTARG}"
-#             # Check if the provided memory ends with a letter (b, k, m, g)
-#             if [[ ! "$MEMORY" =~ [a-zA-Z]$ ]]; then
-#                 MEMORY="${MEMORY}m"
-#             fi
-#             ;;
-#         \? )
-#             echo "Invalid option: -$OPTARG" >&2
-#             show_help
-#             exit 1
-#             ;;
-#         : )
-#             echo "Option -$OPTARG requires an argument." >&2
-#             exit 1
-#             ;;
-#     esac
-# done
-
-# echo "Memory allocated for Docker: $MEMORY"
-
-# # Example usage in a Docker command
-# # docker run -m $MEMORY your_docker_image
+echo "Containers have been updated."
