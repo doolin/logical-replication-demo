@@ -6,9 +6,72 @@ The goal here is to better understand how Postgres logical replication works, an
 
 ---
 
+# Presentations
 
 Running the slides: `npx @marp-team/marp-cli@latest -s deck/`
+
 ---
+
+## Telegraf
+
+The primary challenge for Telegraf is getting user and group premissions correctly configured. Incorrect configuration manifests as the following:
+
+```
+[inputs.docker] Error in plugin: permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock: Get "http://%2Fvar%2Frun%2Fdocker.sock/v1.24/containers/json?filters=%7B%22status%22%3A%7B%22running%22%3Atrue%7D%7D": dial unix /var/run/docker.sock: connect: permission denied
+```
+
+I have not yet been able to repeatedly solve this in any way other than trying a bunch of things to get it to work. Here are some commands to try:
+
+- `stat ~/.docker/run/docker.sock` will provide more or less `ls -la` with groups.
+- `-u $(id -u):$(id -g)`
+- `sudo dseditgroup -o edit -a YOUR_USERNAME -t user daemon `
+- This should already be created: `ln -s -f /Users/<user>/.docker/run/docker.sock /var/run/docker.sock`
+- [Docker permissions](https://docs.docker.com/desktop/mac/permission-requirements/)
+
+
+```
+⌁68% [daviddoolin:~/src/logical-replication-demo] [ruby-3.2.2@logrep] GEN-266(+13/-0) ± stat /var/run/docker.sock
+16777233 42719124 lrwxr-xr-x 1 root daemon 0 42 "Nov 21 12:45:53 2023" "Nov 21 12:45:53 2023" "Nov 21 12:45:53 2023" "Nov 21 12:45:53 2023" 4096 0 0 /var/run/docker.sock
+⌁68% [daviddoolin:~/src/logical-replication-demo] [ruby-3.2.2@logrep] GEN-266(+13/-0) ± stat ~/.docker/run/docker.sock
+16777233 42719445 srw-rw-rw- 1 daviddoolin docker 0 0 "Nov 21 13:03:18 2023" "Nov 21 12:48:36 2023" "Dec 16 05:12:21 2023" "Nov 21 12:48:36 2023" 4096 0 0 /Users/daviddoolin/.docker/run/docker.sock
+```
+
+### Errors
+
+Telegraf has been the most difficult component to configure so far.
+
+#### Permission denied
+
+This is a well-known issue with Docker running on MacOs:
+```
+[inputs.docker] Error in plugin: permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock: Get "http://%2Fvar%2Frun%2Fdocker.sock/v1.24/containers/json?filters=%7B%22status%22%3A%7B%22running%22%3Atrue%7D%7D": dial unix /var/run/docker.sock: connect: permission denied
+```
+
+Sadly, there is no one single way to solve it. In this case it works when the local volume is specified as `docker.sock.raw`
+
+These were two of the most useful links of many:
+
+- [Docker Macos permissions](https://docs.docker.com/desktop/mac/permission-requirements/)
+- [docker.sock issue on github](https://github.com/docker/for-mac/issues/6823)
+
+Debug ideas which didn't work including tinkering with owner and group:
+
+- dscl . list /groups
+- id -Gn daviddoolin
+
+
+#### 401 Unauthorized
+
+This is an API token missing or incorrect:
+
+```
+[outputs.influxdb_v2] When writing to [http://pubmetrics:8086]: failed to write metric to ruby_test (401 Unauthorized): unauthorized: unauthorized access
+2023-12-22 07:17:14 2023-12-22T15:17:14Z E! [agent] Error writing to outputs.influxdb_v2: failed to send metrics to any configured server(s)
+```
+
+This will result when the InfluxDB tocken isn't provisioned into Telegraf. It can be done on startup (see Telegraf docker file) with the token provided on first login, or a new token can be created in InfluxDb and passed into Telegraf using environment variables. There is surely opportunity for improvement using cli tools for provisioning, something for the future.
+
+
 
 ## Grafana
 
@@ -48,12 +111,27 @@ Once a dashboard is saved, the autorefresh can be set.
 
 ## InfluxDB
 
+The goal for InfluxDB is to track all of the docker container statistics, and the Postgres execution behavior.
+
 1. Run `./cleanup.sh`
 1. remove the volume
 1. restart.sh
 1. replicate.sh
 
 Basically the whole thing worked first time I tried it.
+
+### Docker stats display
+
+Here is a working query for InfluxDB which will display Docker stats for the Publisher container:
+
+```
+from(bucket: "ruby_test")
+  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)
+  |> filter(fn: (r) => r["container_name"] == "publisher")
+  |> filter(fn: (r) => r["cpu"] == "cpu-total")
+  |> filter(fn: (r) => r["_measurement"] == "docker_container_cpu")
+  |> filter(fn: (r) => r["_field"] == "usage_percent")
+```
 
 ---
 
