@@ -1,7 +1,7 @@
 apiVersion: 1
 
 datasources:
-- name: InfluxDB
+- name: InfluxDB-Provisioned
   type: influxdb
   access: proxy
   url: http://pubmetrics:8086
