@@ -9,6 +9,6 @@ fi
 
 # TODO: pull fluentbit image and run it
 # https://fluentbit.io/how-it-works/
-# docker buildx build -t fluentbit -f Dockerfile.fluentbit .
-# docker run -d --name fluentbit -p 24224:24224 -p 24224:24224/udp -v fluentbit-storage:/fluent-bit/etc fluentbit
+docker buildx build -t fluentbit -f Dockerfile.fluentbit .
+docker run -d --name fluentbit -p 24224:24224 -p 24224:24224/udp -v fluentbit-storage:/fluent-bit/etc fluentbit
 

@@ -8,7 +8,7 @@ source ./ansi_colors.sh
 source ./helpers.sh
 infotext "Build and restart the subscriber containers..."
 
-CONTAINERS=("subscriber1" "subscriber2" "publisher" "pubmetrics" "grafana" "telegraf")
+CONTAINERS=("subscriber1" "subscriber2" "publisher" "pubmetrics" "grafana" "telegraf" "fluentbit")
 
 for CONTAINER_NAME in "${CONTAINERS[@]}"; do
   if docker ps -a | grep -qw $CONTAINER_NAME; then
@@ -37,6 +37,9 @@ source ./scripts/grafana_run.sh
 
 # Telegraf from Dockerfile.telegraf
 source ./scripts/telegraph_run.sh
+
+# FluentBit builds and runs from this location.
+# source ./scripts/docker/run/fluentbit.sh
 
 # Connect the InfluxDB container to the pubsub_network
 docker network ls | grep -q "pubsub_network" || docker network create pubsub_network

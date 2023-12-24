@@ -1,0 +1,11 @@
+# Use Fluent Bit's Docker image
+FROM cr.fluentbit.io/fluent/fluent-bit:latest
+
+# Set the Fluent Bit service configuration
+COPY ./config/fluent-bit.conf /fluent-bit/etc/
+COPY ./config/parsers.conf /fluent-bit/etc/
+
+# (Optional) Add additional configuration files or plugins if needed
+
+# Start Fluent Bit
+CMD ["/fluent-bit/bin/fluent-bit", "-c", "/fluent-bit/etc/fluent-bit.conf"]
