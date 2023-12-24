@@ -9,7 +9,7 @@
         "type": "graph",
         "targets": [
           {
-            "datasource": "YourInfluxDBDataSourceName",
+            "datasource": "InfluxDB-Provisioned",
             "refId": "A",
             "query": "from(bucket: \"ruby_test\") |> range(start: v.timeRangeStart, stop: v.timeRangeStop) |> filter(fn: (r) => r[\"_measurement\"] == \"locks\") |> filter(fn: (r) => r[\"_field\"] == \"lock_count\") |> filter(fn: (r) => r[\"mode\"] == \"AccessShareLock\" or r[\"mode\"] == \"ExclusiveLock\" or r[\"mode\"] == \"RowExclusiveLock\" or r[\"mode\"] == \"ShareLock\" or r[\"mode\"] == \"ShareUpdateExclusiveLock\")",
             "format": "time_series"
