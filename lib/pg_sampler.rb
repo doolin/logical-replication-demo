@@ -52,7 +52,7 @@ class PGSampler
                                          current_time:)
           @influx_client.insert(payload)
         end
-        sleep 0.1
+        sleep 0.25
       end
     end
   rescue PG::Error => e

@@ -49,4 +49,8 @@ docker network connect pubsub_network grafana
 # Optional: Remove old Docker images to free up space
 # docker system prune -a
 
+# Automatically construct metrics dashboard
+source ./scripts/grafana_dashboard.sh
+
+
 echo "Containers have been updated."
