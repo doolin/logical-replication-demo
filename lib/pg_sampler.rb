@@ -40,7 +40,7 @@ class PGSampler
   # connection open for the duration of the loop. The latter is
   # preferable for performance reasons. The connection is closed
   # automatically when the block exits. Which to use depends on what
-  # we want test.
+  # we want to test.
   def run # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     PG::Connection.open(pg_options) do |conn|
       loop do
