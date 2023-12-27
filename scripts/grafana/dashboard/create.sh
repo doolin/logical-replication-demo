@@ -6,9 +6,9 @@ GRAFANA_HOST="http://localhost:3000"
 GRAFANA_API_TOKEN=$GRAFANA_API_TOKEN
 
 # Dashboard JSON file
-# DASHBOARD_JSON="./scripts/grafana_dashboard.json"
-# DASHBOARD_JSON="./scripts/flux_query_dashboard.json"
-DASHBOARD_JSON="./scripts/grafana_four_panel.json"
+# DASHBOARD_JSON="./scripts/grafana/json/dashboard.json"
+# DASHBOARD_JSON="./scripts/grafana/json/flux_query.json"
+DASHBOARD_JSON="./scripts/grafana/json/four_panel.json"
 
 # Check if the dashboard JSON file exists
 if [ ! -f "$DASHBOARD_JSON" ]; then
