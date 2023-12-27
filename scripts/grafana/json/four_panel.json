@@ -2,7 +2,7 @@
   "dashboard": {
     "id": null,
     "uid": null,
-    "title": "two-by-two",
+    "title": "Mem and CPU and Locks",
     "panels": [
       {
         "id": 1,
