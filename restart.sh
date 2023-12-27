@@ -24,19 +24,19 @@ else
 fi
 
 # PostgresQL
-source ./scripts/postgres_run.sh
+source ./scripts/docker/run/postgres.sh
 
 # InfluxDB
-source ./scripts/influx_run.sh
+source ./scripts/docker/run/influx.sh
 
 # Grafana
-source ./scripts/grafana_run.sh
+source ./scripts/docker/run/grafana.sh
 
 # This should be removed from the repo once the container is running.
 # rm influxdb-datasource.yml
 
 # Telegraf from Dockerfile.telegraf
-source ./scripts/telegraph_run.sh
+source ./scripts/docker/run/telegraf.sh
 
 # FluentBit builds and runs from this location.
 # source ./scripts/docker/run/fluentbit.sh
@@ -50,7 +50,7 @@ docker network connect pubsub_network grafana
 # docker system prune -a
 
 # Automatically construct metrics dashboard
-source ./scripts/grafana_dashboard.sh
+source ./scripts/grafana/dashboard/create.sh
 
 
 echo "Containers have been updated."
