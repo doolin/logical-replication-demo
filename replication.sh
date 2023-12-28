@@ -15,7 +15,8 @@
 # TODO: insert more, then update, then delete. Verify changes propagate to subscriber.
 # TODO: investigate how index creation works with replication.
 # TODO: due diligence on https://github.com/shayonj/pg_easy_replicate
-# TODO: due diliegnce on pglogical
+# TODO: due diliegnce on pglogical extension.
+# TODO: make the script idempotent.
 
 # TODO: install pghero if possible.
 
@@ -35,9 +36,11 @@ run_psql() {
 
 # Prepare the publisher database.
 # Reminder: -f loads a file, -c indicates a sql command to run.
+BOOKS_SCHEMA="./scripts/sql/books_schema.sql"
+
 run_psql -c "DROP DATABASE IF EXISTS $DB_NAME;" 2&> /dev/null
 run_psql -c "CREATE DATABASE $DB_NAME;"
-run_psql -f books_schema.sql -d "$DB_NAME" # -a to echo all
+run_psql -f $BOOKS_SCHEMA -d "$DB_NAME" # -a to echo all
 run_psql -c "CREATE SEQUENCE books_id_seq ;" -d "$DB_NAME"
 run_psql -c "ALTER TABLE books ALTER COLUMN id SET DEFAULT nextval('books_id_seq');" -d "$DB_NAME"
 run_psql -c "\COPY books ("sku", "title", "topic") FROM './data/books_data.csv' DELIMITER ',' CSV HEADER;" -d "$DB_NAME"
@@ -53,11 +56,13 @@ docker restart publisher
 sleep 1 # wait for the server to restart
 
 run_psql -c "CREATE PUBLICATION leadership_pub FOR TABLE books where (topic = 'leadership');"  -d "$DB_NAME"
-run_psql -c "CREATE PUBLICATION technical_pub FOR TABLE books where (topic = 'technical');"  -d "$DB_NAME"
+run_psql -c "CREATE PUBLICATION technical_pub  FOR TABLE books where (topic = 'technical');"   -d "$DB_NAME"
 # Check with SELECT * FROM pg_publication;
 
 # TODO: unify schema
-run_psql -f ./goodreads_pub_schema.sql -d "$DB_NAME"
+GOODREADS_SCHEMA="./scripts/sql/goodreads_pub_schema.sql"
+
+run_psql -f $GOODREADS_SCHEMA -d "$DB_NAME"
 CSV_PATH="./data/goodreads_export-2023-10-17.csv"
 HEADER=$(head -n 1 $CSV_PATH | sed 's/,/","/g; s/^/"/; s/$/"/')
 run_psql -c "\COPY goodreads_books($HEADER) FROM '$CSV_PATH' DELIMITER ',' CSV HEADER;" -d "$DB_NAME"
@@ -68,19 +73,19 @@ docker network ls | grep -q "pubsub_network" || docker network create pubsub_net
 docker network connect pubsub_network publisher
 docker network connect pubsub_network subscriber1
 docker network connect pubsub_network subscriber2
-# docker network connect pubsub_network telegraf
+# docker network connect pubsub_network telegraf # Handled in the telegraf script.
 
 # Replication commands for the Docker subscriber database.
 # Create subscriber1 database
 # Note: ensure there is no sequence table in the subscriber1 database.
-PGPASSWORD=foobar psql -f books_schema.sql -U postgres -p 5433 -h localhost
+PGPASSWORD=foobar psql -f $BOOKS_SCHEMA -U postgres -p 5433 -h localhost
 PGPASSWORD=foobar psql -c "CREATE SUBSCRIPTION sub1 CONNECTION 'host=publisher dbname=publisher user=postgres password=foobar' PUBLICATION leadership_pub;" -U postgres -p 5433 -h localhost
-PGPASSWORD=foobar psql -U postgres -p 5433 -h localhost -f ./goodreads_pub_schema.sql
+PGPASSWORD=foobar psql -U postgres -p 5433 -h localhost -f $GOODREADS_SCHEMA
 
 # Create subscriber2 database
 # Note: ensure there is no sequence table in the subscriber2 database.
-PGPASSWORD=foobar psql -f books_schema.sql -U postgres -p 5434 -h localhost
+PGPASSWORD=foobar psql -f $BOOKS_SCHEMA -U postgres -p 5434 -h localhost
 PGPASSWORD=foobar psql -c "CREATE SUBSCRIPTION sub2 CONNECTION 'host=publisher dbname=publisher user=postgres password=foobar' PUBLICATION technical_pub;" -U postgres -p 5434 -h localhost
-PGPASSWORD=foobar psql -U postgres -p 5434 -h localhost -f ./goodreads_pub_schema.sql
+PGPASSWORD=foobar psql -U postgres -p 5434 -h localhost -f $GOODREADS_SCHEMA
 
 echo "All done"
