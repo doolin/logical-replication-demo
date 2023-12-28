@@ -10,13 +10,13 @@ API_URL="$GRAFANA_HOST/api/dashboards/db"
 # Dashboard JSON file
 # DASHBOARD_JSON="./scripts/grafana/json/dashboard.json"
 # DASHBOARD_JSON="./scripts/grafana/json/flux_query.json"
-# DASHBOARD_JSON="./scripts/grafana/json/four_panel.json"
-DASHBOARD_JSON="./scripts/grafana/json/postgres.json"
+# DASHBOARD_JSON="./scripts/grafana/json/postgres.json"
+DASHBOARD_JSON="./scripts/grafana/json/container_stats.json"
 
 # DASHBOARD_JSON=(
 #     "./scripts/grafana/json/dashboard.json"
-#     "./scripts/grafana/json/flux_query.json"
-#     "./scripts/grafana/json/four_panel.json"
+#     "./scripts/grafana/json/postgres.json"
+#     "./scripts/grafana/json/container_stats.json"
 # )
 
 # This Bash script snippet defines DASHBOARD_JSON as an array
