@@ -48,13 +48,13 @@
       },
       {
         "id": 4,
-        "title": "Railstash Memory Usage",
+        "title": "Network Activity",
         "type": "graph",
         "targets": [
           {
             "datasource": "InfluxDB-Provisioned",
             "refId": "A",
-            "query": "from(bucket: \"ruby_test\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"docker_container_mem\")\n  |> filter(fn: (r) => r[\"_field\"] == \"usage_percent\")\n  |> filter(fn: (r) => r[\"container_name\"] == \"railstash\")",
+            "query": "from(bucket: \"ruby_test\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"docker_container_net\")\n  |> filter(fn: (r) => r[\"container_name\"] == \"publisher\" or r[\"container_name\"] == \"subscriber1\" or r[\"container_name\"] == \"subscriber2\" or r[\"container_name\"] == \"logstash\" or r[\"container_name\"] == \"railstash\" or r[\"container_name\"] == \"kibana\" or r[\"container_name\"] == \"telegraf\" or r[\"container_name\"] == \"elasticsearch\")",
             "format": "time_series"
           }
         ],
