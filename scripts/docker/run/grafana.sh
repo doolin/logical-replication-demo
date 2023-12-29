@@ -9,7 +9,7 @@ fi
 
 # Some m4 magic to avoid committing token to repo while still
 # having the convenience of the configuration file.
-m4 -DINFLUXDB_TOKEN=$INFLUX_LOCAL_TOKEN influxdb-datasource.m4 > influxdb-datasource.yml
+m4 -DINFLUXDB_TOKEN="$INFLUX_LOCAL_TOKEN" influxdb-datasource.m4 > influxdb-datasource.yml
 
 docker buildx build -t grafana -f Dockerfile.grafana .
 docker run -d --name grafana \
