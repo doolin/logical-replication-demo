@@ -2,17 +2,17 @@
   "dashboard": {
     "id": null,
     "uid": null,
-    "title": "Mem and CPU and Locks",
+    "title": "Container Metrics",
     "panels": [
       {
         "id": 1,
-        "title": "Publisher CPU Usage",
+        "title": "CPU Usage",
         "type": "graph",
         "targets": [
           {
             "datasource": "InfluxDB-Provisioned",
             "refId": "A",
-            "query": "from(bucket: \"ruby_test\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"docker_container_cpu\")\n  |> filter(fn: (r) => r[\"_field\"] == \"usage_percent\")\n  |> filter(fn: (r) => r[\"container_name\"] == \"publisher\")",
+            "query": "from(bucket: \"ruby_test\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"docker_container_cpu\")\n  |> filter(fn: (r) => r[\"container_name\"] == \"publisher\" or r[\"container_name\"] == \"subscriber1\" or r[\"container_name\"] == \"subscriber2\" or r[\"container_name\"] == \"railstash\" or r[\"container_name\"] == \"elasticsearch\" or r[\"container_name\"] == \"logstash\" or r[\"container_name\"] == \"kibana\"    )\n  |> filter(fn: (r) => r[\"_field\"] == \"usage_percent\")",
             "format": "time_series"
           }
         ],
