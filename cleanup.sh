@@ -1,7 +1,6 @@
 #!/bin/bash
 
 # shellcheck disable=SC1091
-# TODO: should consider running shellcheck -x
 source ./ansi_colors.sh
 source ./helpers.sh
 infotext "This will stop and remove the subscriber docker containers"
@@ -20,8 +19,17 @@ read -r nukem
 if [[ $nukem == "yes" ]]; then
   docker system prune -af && \
       docker image prune -af && \
-      docker system prune -af --volumes &&
       docker system df # shows disk usage
 else
   infotext "Not nuking docker containers and images."
 fi
+
+# Change this to remove local volumes only.
+# if [[ $nukem == "yes" ]]; then
+#   docker system prune -af && \
+#       docker image prune -af && \
+#       docker system prune -af --volumes && # This nukes all volummes including some I'd like to keep such as jupyter.
+#       docker system df # shows disk usage
+# else
+#   infotext "Not nuking docker containers and images."
+# fi

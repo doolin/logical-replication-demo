@@ -1,10 +1,5 @@
 #!/bin/bash
 
-# TODO: figure out how to handle created_at and updated_at compatible with Rails.
-# 1. these will have to be done using triggers.
-# 2. do the created_at trigger first, then the updated_at trigger.
-# 3. write some tests to verify the triggers work.
-
 # TODO: load testing the pub/sub system.
 # 1. Set up a publisher database in a container.
 # 2. Write a script to load up the publisher database with a bunch of data. Use Faker.
@@ -16,10 +11,6 @@
 # TODO: investigate how index creation works with replication.
 # TODO: due diligence on https://github.com/shayonj/pg_easy_replicate
 # TODO: due diliegnce on pglogical extension.
-# TODO: make the script idempotent.
-
-# TODO: install pghero if possible.
-
 # TODO: constrain postgres to very few connections, say, 2.
 
 # Publisher variables
@@ -57,33 +48,30 @@ sleep 1 # wait for the server to restart
 
 run_psql -c "CREATE PUBLICATION leadership_pub FOR TABLE books where (topic = 'leadership');"  -d "$DB_NAME"
 run_psql -c "CREATE PUBLICATION technical_pub  FOR TABLE books where (topic = 'technical');"   -d "$DB_NAME"
-# Check with SELECT * FROM pg_publication;
+# TODO: Add a test for SELECT * FROM pg_publication;
 
-# TODO: unify schema
+
 GOODREADS_SCHEMA="./scripts/sql/goodreads_pub_schema.sql"
-
 run_psql -f $GOODREADS_SCHEMA -d "$DB_NAME"
 CSV_PATH="./data/goodreads_export-2023-10-17.csv"
 HEADER=$(head -n 1 $CSV_PATH | sed 's/,/","/g; s/^/"/; s/$/"/')
 run_psql -c "\COPY goodreads_books($HEADER) FROM '$CSV_PATH' DELIMITER ',' CSV HEADER;" -d "$DB_NAME"
 
-# TODO: investigate how docker network operates in more detail.
 # create the network if it doesn't exist, then connect the containers to the network.
 docker network ls | grep -q "pubsub_network" || docker network create pubsub_network
 docker network connect pubsub_network publisher
 docker network connect pubsub_network subscriber1
 docker network connect pubsub_network subscriber2
-# docker network connect pubsub_network telegraf # Handled in the telegraf script.
 
 # Replication commands for the Docker subscriber database.
-# Create subscriber1 database
-# Note: ensure there is no sequence table in the subscriber1 database.
+# Create books table on postgres database in subscriber1 container.
+# Note: ensure there is no sequence associated with the subscriber1 books table.
 PGPASSWORD=foobar psql -f $BOOKS_SCHEMA -U postgres -p 5433 -h localhost
 PGPASSWORD=foobar psql -c "CREATE SUBSCRIPTION sub1 CONNECTION 'host=publisher dbname=publisher user=postgres password=foobar' PUBLICATION leadership_pub;" -U postgres -p 5433 -h localhost
 PGPASSWORD=foobar psql -U postgres -p 5433 -h localhost -f $GOODREADS_SCHEMA
 
-# Create subscriber2 database
-# Note: ensure there is no sequence table in the subscriber2 database.
+# Create books table on postgres database in subscriber2 container.
+# Note: ensure there is no sequence associated with the subscriber2 books table.
 PGPASSWORD=foobar psql -f $BOOKS_SCHEMA -U postgres -p 5434 -h localhost
 PGPASSWORD=foobar psql -c "CREATE SUBSCRIPTION sub2 CONNECTION 'host=publisher dbname=publisher user=postgres password=foobar' PUBLICATION technical_pub;" -U postgres -p 5434 -h localhost
 PGPASSWORD=foobar psql -U postgres -p 5434 -h localhost -f $GOODREADS_SCHEMA

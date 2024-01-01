@@ -1,8 +1,7 @@
 #!/bin/bash
 
 # TODO: metrics to put into influx
-# 1. docker stats from publisher, subscriber1, subscriber2
-# 2. database stats for publisher, subscriber1, subscriber2
+# 1. database stats for publisher, subscriber1, subscriber2
 
 source ./ansi_colors.sh
 source ./helpers.sh
