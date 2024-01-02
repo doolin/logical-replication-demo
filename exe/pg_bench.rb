@@ -1,6 +1,13 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
+# The pg_bench executable is a wrapper for the PGBench driver class.
+# It is responsible for parsing command line options and passing them
+# to the driver class. It also initializes the benchmark before running
+# it.
+#
+# Run thie in the backbround with: nohup ./exe/pg_bench.rb > /dev/null 2>&1 &
+
 require_relative '../lib/pg_bench'
 require 'optparse'
 
