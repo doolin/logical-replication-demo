@@ -11,11 +11,12 @@
 require_relative '../lib/pg_bench'
 require 'optparse'
 
+# Default values. These can be overridden by command line options.
 options = {
-  scale: 10,   # Default scale
-  threads: 3,  # Default threads
-  clients: 10, # Default clients
-  duration: 5  # Default duration
+  scale: 10,
+  threads: 3,
+  clients: 10,
+  duration: 5
 }
 
 # Define the options and parse them
