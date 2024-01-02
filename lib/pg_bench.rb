@@ -24,6 +24,18 @@ class PGBench
 
   def initialize(options = {})
     @options = options
+    initialize_pg_bench
+  end
+
+  def initialize_pg_bench
+    PG::Connection.open(PG_OPTIONS) do |conn|
+      query = "SELECT 'table_exists' WHERE EXISTS (SELECT FROM pg_tables WHERE tablename = 'pgbench_accounts');"
+      result = conn.exec(query)
+      if result.ntuples.zero?
+        puts 'Initializing pgbench'
+        system("PGPASSWORD=foobar pgbench -i -h #{HOST} -p #{PORT} -U #{PG_USER} #{DB_NAME}")
+      end
+    end
   end
 
   def run
