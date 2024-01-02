@@ -18,7 +18,7 @@ RSpec.describe PGBench do
     end
 
     it 'calls bench_sys with default command' do
-      default_command = "PGPASSWORD=foobar pgbench -h localhost -p 5435 -U postgres -s 10 -T 60 -c 10 -j 3 publisher"
+      default_command = 'PGPASSWORD=foobar pgbench -h localhost -p 5435 -U postgres -s 10 -T 60 -c 10 -j 3 publisher'
       pgbench.run_default
 
       expect(pgbench).to have_received(:bench_sys).with(default_command)

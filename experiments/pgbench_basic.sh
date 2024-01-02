@@ -9,4 +9,6 @@ sleep 1
 
 # This doesn't work because it exists when the script ends,
 # so it has to be run manually.
+#
+# TODO: see if nohup will work.
 # ./exe/pg_sammpler.rb

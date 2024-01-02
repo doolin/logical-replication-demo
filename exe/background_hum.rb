@@ -13,6 +13,5 @@ options = {
   duration: 600  # Default duration
 }
 
-
 puts "Configured options: #{options.inspect}"
 PGBench.new(options).run
