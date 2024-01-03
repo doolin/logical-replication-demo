@@ -1,3 +1,6 @@
+# shellcheck shell=bash
+
+# shellcheck disable=SC2034
 # From http://www.intuitive.com/wicked/showscript.cgi?011-colors.sh
 initializeANSI()
 {

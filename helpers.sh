@@ -1,13 +1,15 @@
+# shellcheck shell=bash
+
+source ./ansi_colors.sh
 
 press_enter()
 {
-  read -p "${redf}Press [Enter]...${reset}"
+  read -rp "${redf}Press [Enter]...${reset}"
 }
 
 infotext()
 {
-  printf "${cyanf}$1${reset}\n"
-  # echo "${cyanf}$1${reset}"
+  printf "${cyanf}%s${reset}\n" "$1"
 
   if [[ -n $2 ]];
   then
