@@ -14,7 +14,6 @@
 # TODO: constrain postgres to very few connections, say, 2.
 
 # Publisher variables
-PGPASSWORD="foobar"
 PG_HOST="localhost"
 PG_PORT="5435"
 PG_USER="postgres"
@@ -34,7 +33,7 @@ run_psql -c "CREATE DATABASE $DB_NAME;"
 run_psql -f $BOOKS_SCHEMA -d "$DB_NAME" # -a to echo all
 run_psql -c "CREATE SEQUENCE books_id_seq ;" -d "$DB_NAME"
 run_psql -c "ALTER TABLE books ALTER COLUMN id SET DEFAULT nextval('books_id_seq');" -d "$DB_NAME"
-run_psql -c "\COPY books ("sku", "title", "topic") FROM './data/books_data.csv' DELIMITER ',' CSV HEADER;" -d "$DB_NAME"
+run_psql -c "\COPY books (sku, title, topic) FROM './data/books_data.csv' DELIMITER ',' CSV HEADER;" -d "$DB_NAME"
 
 # Set up replication on the publisher database.
 run_psql -c "ALTER SYSTEM SET wal_level = logical;" -d "$DB_NAME"
@@ -55,7 +54,7 @@ GOODREADS_SCHEMA="./scripts/sql/goodreads_pub_schema.sql"
 run_psql -f $GOODREADS_SCHEMA -d "$DB_NAME"
 CSV_PATH="./data/goodreads_export-2023-10-17.csv"
 HEADER=$(head -n 1 $CSV_PATH | sed 's/,/","/g; s/^/"/; s/$/"/')
-run_psql -c "\COPY goodreads_books($HEADER) FROM '$CSV_PATH' DELIMITER ',' CSV HEADER;" -d "$DB_NAME"
+run_psql -c "\COPY goodreads_books ($HEADER) FROM '$CSV_PATH' DELIMITER ',' CSV HEADER;" -d "$DB_NAME"
 
 # create the network if it doesn't exist, then connect the containers to the network.
 docker network ls | grep -q "pubsub_network" || docker network create pubsub_network
