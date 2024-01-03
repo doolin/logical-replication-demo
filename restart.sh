@@ -10,9 +10,9 @@ infotext "Build and restart the subscriber containers..."
 CONTAINERS=("subscriber1" "subscriber2" "publisher" "pubmetrics" "grafana" "telegraf" "fluentbit")
 
 for CONTAINER_NAME in "${CONTAINERS[@]}"; do
-  if docker ps -a | grep -qw $CONTAINER_NAME; then
-    docker stop $CONTAINER_NAME
-    docker rm $CONTAINER_NAME # not needed when container is removed with --rm
+  if docker ps -a | grep -qw "$CONTAINER_NAME"; then
+    docker stop "$CONTAINER_NAME"
+    docker rm "$CONTAINER_NAME" # not needed when container is removed with --rm
   fi
 done
 
