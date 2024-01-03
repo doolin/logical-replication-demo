@@ -3,7 +3,6 @@
 # TODO: metrics to put into influx
 # 1. database stats for publisher, subscriber1, subscriber2
 
-source ./ansi_colors.sh
 source ./helpers.sh
 infotext "Build and restart the subscriber containers..."
 

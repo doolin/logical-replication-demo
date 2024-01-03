@@ -1,7 +1,6 @@
 #!/bin/bash
 
 # NOTE: This script is deprecated in favor of restart.sh
-source ./ansi_colors.sh
 source ./helpers.sh
 infotext "Build and start the subscriber containers..."
 
