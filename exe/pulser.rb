@@ -14,4 +14,4 @@ options = {
 }
 
 puts "Configured options: #{options.inspect}"
-PGBench.new(options).run
+PGBench.new(options).pulse
