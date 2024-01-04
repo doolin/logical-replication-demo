@@ -42,6 +42,17 @@ class PGBench
     bench_sys(pgbench)
   end
 
+  # Send an intermittent pulse of load to the database.
+  def pulse
+    @options[:duration] = 3
+    @options[:scale] = 10
+    stop_time = Time.now + 300
+    while Time.now < stop_time
+      bench_sys(pgbench)
+      sleep 15
+    end
+  end
+
   def bench_sys(cmd)
     system(cmd)
   end
