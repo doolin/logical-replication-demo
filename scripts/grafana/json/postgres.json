@@ -19,8 +19,9 @@
         "gridPos": { "h": 10, "w": 12, "x": 0, "y": 0 }
       }
     ],
+    "refresh": "10s",
     "time": {
-      "from": "now-6h",
+      "from": "now-1h",
       "to": "now"
     },
     "timepicker": {
