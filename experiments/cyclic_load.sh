@@ -6,6 +6,11 @@
 # with other scripts.
 
 # Ensure the database is initialized for pgbench.
-source pgbench.sh -T 1
-sleep 1
-# ./exe/cyclic_load.rb &
+# source pgbench.sh -T 1
+# sleep 1
+
+DURATION=120
+nohup ./exe/background_hum.rb -T $DURATION &
+nohup ./exe/pulser.rb -T $DURATION &
+nohup ./exe/pg_sampler.rb -T $DURATION &
+

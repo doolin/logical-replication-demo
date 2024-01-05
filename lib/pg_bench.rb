@@ -21,6 +21,7 @@ class PGBench
   SCALE = 10
   CLIENTS = 10
   THREADS = 3
+  SLEEP_TIME = 15
 
   def initialize(options = {})
     @options = options
@@ -34,6 +35,7 @@ class PGBench
       if result.ntuples.zero?
         puts 'Initializing pgbench'
         system("PGPASSWORD=foobar pgbench -i -h #{HOST} -p #{PORT} -U #{PG_USER} #{DB_NAME}")
+        sleep 1
       end
     end
   end
@@ -44,29 +46,44 @@ class PGBench
 
   # Send an intermittent pulse of load to the database.
   def pulse
-    @options[:duration] = 3
-    @options[:scale] = 10
-    stop_time = Time.now + 300
+    stop_time = Time.now + time_in_seconds
+
     while Time.now < stop_time
       bench_sys(pgbench)
-      sleep 15
+      sleep sleep_time
     end
   end
 
   def bench_sys(cmd)
+    # TODO: capture STDOUT and record in postgres
     system(cmd)
   end
 
   def pgbench
-    "PGPASSWORD=foobar pgbench -h #{HOST} -p #{PORT} -U #{PG_USER} -s #{scale} -T #{time_in_secongs} -c #{clients} -j #{threads} #{DB_NAME}"
+    "PGPASSWORD=foobar pgbench -h #{HOST} -p #{PORT} -U #{PG_USER} -s #{scale} -T #{time_in_seconds} -c #{clients} -j #{threads} #{DB_NAME} --log"
+    # <<~CMD
+    #   PGPASSWORD=foobar pgbench \\
+    #     -h #{HOST} \\
+    #     -p #{PORT} \\
+    #     -U #{PG_USER} \\
+    #     -s #{scale} \\
+    #     -T #{time_in_seconds} \\
+    #     -c #{clients} \\
+    #     -j #{threads} \\
+    #     #{DB_NAME} --log
+    # CMD
   end
 
-  def time_in_secongs
+  def time_in_seconds
     options[:duration] || DURATION
   end
 
   def scale
     options[:scale] || SCALE
+  end
+
+  def sleep_time
+    options[:sleep_time] || SLEEP_TIME
   end
 
   def clients
