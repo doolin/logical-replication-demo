@@ -1,9 +1,7 @@
-
 #!/bin/bash
 
 # Grafana API details
 GRAFANA_HOST="http://localhost:3000"
-GRAFANA_API_TOKEN=$GRAFANA_API_TOKEN
 API_URL="$GRAFANA_HOST/api/dashboards/db"
 
 
@@ -38,6 +36,7 @@ curl -X POST "$API_URL" \
      -d @"$DASHBOARD_JSON"
 
 # Check if the dashboard was created successfully
+# shellcheck disable=SC2181
 if [ $? -eq 0 ]; then
     echo "Dashboard created successfully."
 else
