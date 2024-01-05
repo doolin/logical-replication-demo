@@ -14,10 +14,14 @@ require_relative 'influx_db_client'
 # /dev/null if desired. Could also be run in the background, just beware
 # there is no internal stopping criteria, so it will run until killed.
 class PGSampler
-  # TODO: clean up attr_readers, not all of them are needed.
-  attr_reader :pg_options, :influxdb_host, :influxdb_port, :influxdb_org, :influxdb_bucket
+  SLEEP_TIME = 0.25
+  DURATION = 10
 
-  def initialize
+  # TODO: clean up attr_readers, not all of them are needed.
+  attr_reader :pg_options, :options, :influxdb_host, :influxdb_port, :influxdb_org, :influxdb_bucket
+
+  def initialize(options)
+    @options = options
     @pg_options = PG_OPTIONS
 
     @terminate = false
@@ -42,9 +46,11 @@ class PGSampler
   # automatically when the block exits. Which to use depends on what
   # we want to test.
   def run # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+    stop_time = Time.now + duration
     PG::Connection.open(pg_options) do |conn|
       loop do
         break if @terminate
+        break if Time.now > stop_time
 
         current_time = (Time.now.to_f * 1_000_000_000).to_i
         get_pg_locks(conn).each do |lock|
@@ -52,7 +58,7 @@ class PGSampler
                                          current_time:)
           @influx_client.insert(payload)
         end
-        sleep 0.25
+        sleep sleep_time
       end
     end
   rescue PG::Error => e
@@ -64,6 +70,14 @@ class PGSampler
   end
 
   private
+
+  def sleep_time
+    options[:sleep_time] || SLEEP_TIME
+  end
+
+  def duration
+    options[:duration] || DURATION
+  end
 
   def query
     <<-SQL
