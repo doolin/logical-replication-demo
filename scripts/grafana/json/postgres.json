@@ -19,7 +19,7 @@
         "gridPos": { "h": 10, "w": 12, "x": 0, "y": 0 }
       }
     ],
-    "refresh": "10s",
+    "refresh": "5s",
     "time": {
       "from": "now-1h",
       "to": "now"

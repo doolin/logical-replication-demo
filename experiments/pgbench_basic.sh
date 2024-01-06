@@ -3,12 +3,10 @@
 # This script runs a basic pgbench test on a single node.
 
 # Ensure the database is initialized for pgbench.
-source pgbench.sh -T 1
-sleep 1
-./exe/background_hum.rb &
+# This functionality should now be part of the Ruby script.
+# source pgbench.sh -T 1
+# sleep 1
 
-# This doesn't work because it exists when the script ends,
-# so it has to be run manually.
-#
-# TODO: see if nohup will work.
-# ./exe/pg_sammpler.rb
+DURATION=10
+./exe/background_hum.rb -T $DURATION &
+nohup ./exe/pg_sampler.rb -T $DURATION &

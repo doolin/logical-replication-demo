@@ -6,3 +6,7 @@ influxdb-datasource.yml
 # Yard, don't care about docs yet.
 .yardoc/*
 doc/*
+
+# experiments
+nohup.out
+pgbench_log*
