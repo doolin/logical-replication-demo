@@ -11,26 +11,18 @@ require_relative 'influx_db_client'
 #
 # Invoke ./exe/pg_sampler.rb to run it. It will write the influx query to
 # stdout and continnuously scroll in the terminal. Could be redirected to
-# /dev/null if desired. Could also be run in the background, just beware
-# there is no internal stopping criteria, so it will run until killed.
+# /dev/null if desired. Could also be run in the background; the default
+# duration of 300 seconds will ensure the script exits.
 class PGSampler
   SLEEP_TIME = 0.25
-  DURATION = 10
+  DURATION = 300
 
-  # TODO: clean up attr_readers, not all of them are needed.
-  attr_reader :pg_options, :options, :influxdb_host, :influxdb_port, :influxdb_org, :influxdb_bucket
+  attr_reader :pg_options, :options
 
   def initialize(options)
     @options = options
     @pg_options = PG_OPTIONS
-
     @terminate = false
-
-    # TODO: remove as many of these as possible.
-    @influxdb_host = 'localhost'
-    @influxdb_port = 8086
-    @influxdb_org = 'inventium'
-    @influxdb_bucket = 'pg_test'
     @influx_client = InfluxDBClient.new(host: 'localhost', port: 8086, bucket: 'ruby_test', org: 'inventium')
   end
 
