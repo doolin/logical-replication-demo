@@ -13,3 +13,6 @@ pgbench_log*
 
 # datagrip and friends
 .idea/*
+
+# Simplecov
+coverage/*
