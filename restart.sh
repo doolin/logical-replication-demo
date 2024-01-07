@@ -6,7 +6,7 @@
 source ./helpers.sh
 infotext "Build and restart the subscriber containers..."
 
-CONTAINERS=("subscriber1" "subscriber2" "publisher" "pubmetrics" "grafana" "telegraf" "fluentbit")
+CONTAINERS=("subscriber1" "subscriber2" "publisher" "pubmetrics" "grafana" "telegraf" "fluentbit" "pghero")
 
 for CONTAINER_NAME in "${CONTAINERS[@]}"; do
   if docker ps -a | grep -qw "$CONTAINER_NAME"; then
@@ -29,6 +29,9 @@ source ./scripts/docker/run/influx.sh
 
 # Grafana
 source ./scripts/docker/run/grafana.sh
+
+# PGHero
+source ./scripts/docker/run/pghero.sh
 
 # This should be removed from the repo once the container is running.
 # rm influxdb-datasource.yml
