@@ -12,7 +12,8 @@ ENV DOCKER_INFLUXDB_INIT_BUCKET=ruby_test
 
 # Convenient utilities
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends netcat-openbsd iputils-ping curl less && \
+    apt-get install -y --no-install-recommends \
+      netcat-openbsd iputils-ping curl less traceroute nmap tcpdump iperf && \
     rm -rf /var/lib/apt/lists/*
 
 
