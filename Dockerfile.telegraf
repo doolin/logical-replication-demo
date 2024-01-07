@@ -3,7 +3,6 @@ FROM telegraf:latest
 # Official image https://hub.docker.com/_/telegraf
 
 # Convenient utilities
-# Adpat the following to the base image:
-# RUN apt-get update && \
-#     apt-get install -y --no-install-recommends netcat-openbsd iputils-ping curl less && \
-#     rm -rf /var/lib/apt/lists/*
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends netcat-openbsd iputils-ping curl less && \
+    rm -rf /var/lib/apt/lists/*
