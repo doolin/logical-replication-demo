@@ -11,4 +11,5 @@ gem 'rspec'
 gem 'rspec-mocks'
 gem 'rubocop'
 gem 'rubocop-rspec'
+gem 'simplecov', require: false, group: :test
 gem 'yard'

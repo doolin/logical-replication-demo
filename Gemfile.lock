@@ -11,6 +11,7 @@ GEM
     core (0.1.6)
     curses (1.4.4)
     diff-lcs (1.5.0)
+    docile (1.4.0)
     dry-configurable (1.1.0)
       dry-core (~> 1.0, < 2)
       zeitwerk (~> 2.6)
@@ -133,6 +134,12 @@ GEM
       refinements (~> 11.0)
       xdg (~> 7.1)
       zeitwerk (~> 2.6)
+    simplecov (0.22.0)
+      docile (~> 1.1)
+      simplecov-html (~> 0.11)
+      simplecov_json_formatter (~> 0.1)
+    simplecov-html (0.12.3)
+    simplecov_json_formatter (0.1.4)
     sod (0.3.1)
       cogger (~> 0.12)
       dry-container (~> 0.11)
@@ -169,6 +176,7 @@ DEPENDENCIES
   rspec-mocks
   rubocop
   rubocop-rspec
+  simplecov
   yard
 
 BUNDLED WITH
