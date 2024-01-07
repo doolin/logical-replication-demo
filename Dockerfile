@@ -18,7 +18,9 @@ RUN echo "building postgres 16"
 # COPY postgresql.conf      /etc/postgresql/postgresql.conf
 
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends netcat-openbsd iputils-ping curl less && \
+    apt-get install -y --no-install-recommends \
+      netcat-openbsd iputils-ping curl less tcpdump nmap iperf net-tools \
+      traceroute nmap tcpdump iperf && \
     rm -rf /var/lib/apt/lists/*
 
 CMD ["postgres"] # , "-c", "config_file=/etc/postgresql/postgresql.conf"]
