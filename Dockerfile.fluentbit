@@ -5,7 +5,16 @@ FROM cr.fluentbit.io/fluent/fluent-bit:latest
 COPY ./config/fluent-bit.conf /fluent-bit/etc/
 COPY ./config/parsers.conf /fluent-bit/etc/
 
-# (Optional) Add additional configuration files or plugins if needed
+# Convenient utilities
+# None of the following work:
+# RUN yum update -y
+# RUN apk update && apk add curl net-tools
+# RUN apt-get update
+# RUN apt-get update && \
+#     apt-get install -y --no-install-recommends \
+#       netcat-openbsd iputils-ping curl less traceroute nmap tcpdump iperf && \
+#     rm -rf /var/lib/apt/lists/*
+
 
 # Start Fluent Bit
 CMD ["/fluent-bit/bin/fluent-bit", "-c", "/fluent-bit/etc/fluent-bit.conf"]
