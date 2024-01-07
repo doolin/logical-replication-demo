@@ -10,3 +10,6 @@ doc/*
 # experiments
 nohup.out
 pgbench_log*
+
+# datagrip and friends
+.idea/*

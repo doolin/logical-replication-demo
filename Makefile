@@ -21,7 +21,7 @@ all: $(SVG_OUTPUT) $(PNG_OUTPUT)
 %.png: %.mmd
 	mmdc -i $< -o $@
 
-clean: rm_logs
+spotless: clean
 	rm -f $(SVG_OUTPUT) $(PNG_OUTPUT)
 
 .PHONY: all svg png clean
@@ -59,5 +59,5 @@ sub1:
 sub2:
 	@PGPASSWORD=$(DB_PASSWORD) psql -h localhost -p 5434 -U $(DB_USER) -d $(DB_NAME)
 
-rm_logs:
+clean:
 	rm -rf pgbench_log*

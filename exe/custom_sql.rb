@@ -11,7 +11,7 @@ options = {
   scale: 10,
   threads: 3,
   clients: 10,
-  duration: 300
+  duration: 120
 }
 
 OptionParser.new do |opts|
@@ -35,4 +35,4 @@ OptionParser.new do |opts|
 end.parse!
 
 puts "Configured options: #{options.inspect}"
-PGBench.new(options).run
+PGBench.new(options).custom
