@@ -17,7 +17,7 @@ class PGBench
   PG_USER = 'postgres'
   HOST = 'localhost'
   PORT = 5435
-  DURATION = 60
+  DURATION = 120
   SCALE = 10
   CLIENTS = 10
   THREADS = 3
@@ -54,24 +54,47 @@ class PGBench
     end
   end
 
+  def custom
+    stop_time = Time.now + time_in_seconds
+
+    while Time.now < stop_time
+      bench_sys(pgbench_custom)
+      sleep sleep_time
+    end
+  end
+
   def bench_sys(cmd)
     # TODO: capture STDOUT and record in postgres
     system(cmd)
   end
 
   def pgbench
-    "PGPASSWORD=foobar pgbench -h #{HOST} -p #{PORT} -U #{PG_USER} -s #{scale} -T #{time_in_seconds} -c #{clients} -j #{threads} #{DB_NAME} --log"
-    # <<~CMD
-    #   PGPASSWORD=foobar pgbench \\
-    #     -h #{HOST} \\
-    #     -p #{PORT} \\
-    #     -U #{PG_USER} \\
-    #     -s #{scale} \\
-    #     -T #{time_in_seconds} \\
-    #     -c #{clients} \\
-    #     -j #{threads} \\
-    #     #{DB_NAME} --log
-    # CMD
+    <<~CMD
+      PGPASSWORD=foobar pgbench \\
+        -h #{HOST} \\
+        -p #{PORT} \\
+        -U #{PG_USER} \\
+        -s #{scale} \\
+        -T #{time_in_seconds} \\
+        -c #{clients} \\
+        -j #{threads} \\
+        #{DB_NAME} --log
+    CMD
+  end
+
+  def pgbench_custom
+    <<~CMD
+      PGPASSWORD=foobar pgbench \\
+        -h #{HOST} \\
+        -p #{PORT} \\
+        -U #{PG_USER} \\
+        -s #{scale} \\
+        -T #{time_in_seconds} \\
+        -c #{clients} \\
+        -j #{threads} \\
+        -f ./scripts/sql/pgbench_custom.sql \\
+        #{DB_NAME} --log
+    CMD
   end
 
   def time_in_seconds
