@@ -23,13 +23,14 @@ RSpec.describe BooksInserter do
 
     it 'inserts a book into the database' do
       conn = inserter.instance_variable_get(:@conn)
-      expect(conn).to receive(:exec_params).with(
+      allow(conn).to receive(:exec_params) # Set up conn as a spy
+
+      inserter.insert_book
+
+      expect(conn).to have_received(:exec_params).with(
         'INSERT INTO books (sku, title, topic) VALUES ($1, $2, $3)',
         [sku, title, topic]
       )
-      inserter.insert_book
     end
   end
-
-  # Add more tests for other methods as needed
 end

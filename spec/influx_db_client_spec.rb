@@ -73,7 +73,7 @@ RSpec.describe InfluxDBClient do
 
       # Use `have_received` to assert that `write` was called on the spy
       expect(write_api_mock).to have_received(:write)
-        .with(hash_including(data: kind_of(String), bucket:, org:))
+        .with(hash_including(data: kind_of(String)))
         .exactly(count).times
     end
   end

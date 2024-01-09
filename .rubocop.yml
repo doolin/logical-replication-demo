@@ -2,4 +2,18 @@ require:
   - rubocop-rspec
 
 AllCops:
-    NewCops: enable
+  NewCops: enable
+  Exclude:
+    - 'spec/pg_sampler_spec.rb'
+
+# Exclude RSpec/MultipleMemoizedHelpers: for influx_db_client_spec.rb
+RSpec/MultipleMemoizedHelpers:
+  Exclude:
+    - 'spec/influx_db_client_spec.rb'
+
+RSpec/ExampleLength:
+  Max: 20
+
+RSpec/SubjectStub:
+  Exclude:
+    - 'spec/books_inserter_spec.rb'

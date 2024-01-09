@@ -11,7 +11,7 @@ RSpec.describe PGBench do
   end
 
   describe '#run_default' do
-    let(:pgbench) { PGBench.new }
+    let(:pgbench) { described_class.new }
 
     before do
       allow(pgbench).to receive(:bench_sys)
