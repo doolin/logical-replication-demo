@@ -15,6 +15,7 @@ require 'time'
 class InfluxDBClient
   attr_reader :host, :port, :bucket, :org, :token
 
+  # TODO: change to options hash.
   def initialize(host:, port:, bucket:, org:)
     @host = host
     @port = port
