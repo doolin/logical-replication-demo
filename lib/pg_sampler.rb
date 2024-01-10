@@ -16,6 +16,12 @@ require_relative 'influx_db_client'
 class PGSampler
   SLEEP_TIME = 0.25
   DURATION = 300
+  INFLUXDB_OPTIONS = {
+    host: 'localhost',
+    port: 8086,
+    bucket: 'ruby_test',
+    org: 'inventium'
+  }.freeze
 
   attr_reader :pg_options, :options
 
@@ -23,7 +29,7 @@ class PGSampler
     @options = options
     @pg_options = PG_OPTIONS
     @terminate = false
-    @influx_client = InfluxDBClient.new(host: 'localhost', port: 8086, bucket: 'ruby_test', org: 'inventium')
+    @influx_client = InfluxDBClient.new(INFLUXDB_OPTIONS)
   end
 
   def influx_query
