@@ -16,11 +16,11 @@ class InfluxDBClient
   attr_reader :host, :port, :bucket, :org, :token
 
   # TODO: change to options hash.
-  def initialize(host:, port:, bucket:, org:)
-    @host = host
-    @port = port
-    @bucket = bucket
-    @org = org
+  def initialize(options = {})
+    @host = options[:host]
+    @port = options[:port]
+    @bucket = options[:bucket]
+    @org = options[:org]
     @token = ENV.fetch('INFLUX_LOCAL_TOKEN', nil)
   end
 

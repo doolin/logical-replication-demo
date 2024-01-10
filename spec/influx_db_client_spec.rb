@@ -3,6 +3,10 @@
 # require 'spec_helper'
 require_relative '../lib/influx_db_client'
 
+# This exclusions seems fine given how this class
+# is impplemented. It's not a model, it's a client,
+# and requires a lot of configuration.
+# rubocop:disable RSpec/MultipleMemoizedHelpers
 RSpec.describe InfluxDBClient do
   let(:host) { 'http://localhost' }
   let(:port) { '8086' }
@@ -10,12 +14,21 @@ RSpec.describe InfluxDBClient do
   let(:org) { 'test_org' }
   let(:token) { 'test_token' }
 
+  let(:options) do
+    {
+      host:,
+      port:,
+      bucket:,
+      org:
+    }
+  end
+
   before do
     allow(ENV).to receive(:fetch).with('INFLUX_LOCAL_TOKEN', nil).and_return(token)
   end
 
   describe 'initialization' do
-    subject(:influx_client) { described_class.new(host:, port:, bucket:, org:) }
+    subject(:influx_client) { described_class.new(options) }
 
     it 'assigns host' do
       expect(influx_client.host).to eq(host)
@@ -41,7 +54,7 @@ RSpec.describe InfluxDBClient do
   describe '#client' do
     subject(:client) { influx_client.client }
 
-    let(:influx_client) { described_class.new(host:, port:, bucket:, org:) }
+    let(:influx_client) { described_class.new(options) }
 
     it 'returns an InfluxDB2 client' do
       expect(client).to be_a(InfluxDB2::Client)
@@ -49,7 +62,7 @@ RSpec.describe InfluxDBClient do
   end
 
   describe '#payload' do
-    subject(:payload) { described_class.new(host:, port:, bucket:, org:).payload }
+    subject(:payload) { described_class.new(options).payload }
 
     it 'generates a valid line protocol payload' do
       expect(payload).to match(/locks,mode=(AccessExclusiveLock|RowShareLock) lock_count=\d+ \d+/)
@@ -57,7 +70,7 @@ RSpec.describe InfluxDBClient do
   end
 
   describe '#insert_demo' do
-    let(:client) { described_class.new(host:, port:, bucket:, org:) }
+    let(:client) { described_class.new(options) }
     let(:write_api_mock) { instance_spy(InfluxDB2::WriteApi) }
 
     before do
@@ -87,3 +100,4 @@ RSpec.describe InfluxDBClient do
     stream.reopen(old_stream)
   end
 end
+# rubocop:enable RSpec/MultipleMemoizedHelpers

@@ -6,11 +6,6 @@ AllCops:
   Exclude:
     - 'spec/pg_sampler_spec.rb'
 
-# Exclude RSpec/MultipleMemoizedHelpers: for influx_db_client_spec.rb
-RSpec/MultipleMemoizedHelpers:
-  Exclude:
-    - 'spec/influx_db_client_spec.rb'
-
 RSpec/ExampleLength:
   Max: 20
 
