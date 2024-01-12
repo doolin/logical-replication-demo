@@ -45,20 +45,7 @@ RSpec.describe PGBench do
 
       expect(pgbench.pgbench).to eq(expected)
     end
-
-    # Add more tests for variations in pgbench command...
   end
 
   # Additional tests for #pgbench_custom, #pulse, #custom, etc.
-
-  describe '#bench_sys' do
-    let(:command) { 'echo "Hello"' }
-
-    it 'executes a system command' do
-      expect(pgbench).to receive(:system).with(command)
-      pgbench.bench_sys(command)
-    end
-
-    # More tests for system command execution...
-  end
 end
