@@ -59,7 +59,7 @@ class InfluxDBClient
 
   def insert(payload)
     write_api.write(data: payload)
-    puts payload
+    puts payload # unless ENV['RSPEC'] == 'test' # spec support
   end
 
   def write_api

@@ -2,3 +2,5 @@
 
 require 'simplecov'
 SimpleCov.start
+
+ENV['RSPEC'] = 'test'
