@@ -38,6 +38,19 @@ run_psql -c "\COPY books (sku, title, topic) FROM './data/books_data.csv' DELIMI
 # Set up replication on the publisher database.
 run_psql -c "ALTER SYSTEM SET wal_level = logical;" -d "$DB_NAME"
 run_psql -c "ALTER SYSTEM SET listen_addresses = '*'; " -d "$DB_NAME"
+run_psql -c "ALTER SYSTEM SET shared_preload_libraries = 'pg_stat_statements';" -d "$DB_NAME"
+run_psql -c "CREATE EXTENSION IF NOT EXISTS pg_stat_statements;" -d "$DB_NAME"
+
+# For later
+# run_psql -c "ALTER SYSTEM SET max_replication_slots = 10;" -d "$DB_NAME"
+# run_psql -c "ALTER SYSTEM SET max_wal_senders = 10;" -d "$DB_NAME"
+# run_psql -c "ALTER SYSTEM SET max_worker_processes = 10;" -d "$DB_NAME"
+# run_psql -c "ALTER SYSTEM SET max_connections = 10;" -d "$DB_NAME"
+# run_psql -c "ALTER SYSTEM SET max_locks_per_transaction = 10;" -d "$DB_NAME"
+# run_psql -c "ALTER SYSTEM SET max_pred_locks_per_transaction = 10;" -d "$DB_NAME"
+# run_psql -c "ALTER SYSTEM SET track_commit_timestamp = on;" -d "$DB_NAME"
+# run_psql -c "ALTER SYSTEM SET synchronous_commit = off;" -d "$DB_NAME"
+
 
 docker cp publisher:/var/lib/postgresql/data/pg_hba.conf ./pg_hba.conf
 echo "host all all all trust" >> pg_hba.conf
