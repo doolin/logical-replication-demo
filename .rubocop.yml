@@ -12,3 +12,7 @@ RSpec/ExampleLength:
 RSpec/SubjectStub:
   Exclude:
     - 'spec/books_inserter_spec.rb'
+
+Metrics/ClassLength:
+  Exclude:
+    - lib/pg_sampler.rb # https://doolin.atlassian.net/browse/GEN-366
