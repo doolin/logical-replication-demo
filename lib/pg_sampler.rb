@@ -42,7 +42,6 @@ class PGSampler
     get_pg_locks(conn).each do |lock|
       payload = format(influx_query, lock_modes: lock['mode'], lock_counts: lock['lock_count'],
                                      current_time:)
-      # binding.irb
       @influx_client.insert(payload)
     end
   end
@@ -52,9 +51,17 @@ class PGSampler
     influx_query = 'size,database=publisher size=%<size>s %<current_time>s'
 
     get_pg_size(conn).each do |size|
-      # binding.irb
       payload = format(influx_query, size: size['pg_database_size'], current_time:)
-      puts payload
+      @influx_client.insert(payload)
+    end
+  end
+
+  def mean_time(conn)
+    current_time = (Time.now.to_f * 1_000_000_000).to_i
+    influx_query = 'mean_time_query,database=publisher mean_time=%<mean_time>s %<current_time>s'
+
+    get_pg_mean_query(conn).each do |mean|
+      payload = format(influx_query, mean_time: mean['avg_exec_time'], current_time:)
       @influx_client.insert(payload)
     end
   end
@@ -75,6 +82,7 @@ class PGSampler
 
         locks(conn)
         size(conn)
+        mean_time(conn)
         sleep sleep_time
       end
     end
@@ -119,8 +127,24 @@ class PGSampler
     []
   end
 
+  def mean_time_query
+    <<~SQL
+      SELECT
+        NOW() as time,
+        (SUM(total_exec_time) / SUM(calls)) as avg_exec_time#{' '}
+      FROM pg_stat_statements;
+    SQL
+  end
+
+  def get_pg_mean_query(conn)
+    conn.exec_params(mean_time_query)
+  rescue PG::Error => e
+    puts "Failed to retrieve PostgreSQL size: #{e.message}"
+    []
+  end
+
   def size_query
-    "  SELECT pg_database_size('publisher');"
+    "SELECT pg_database_size('publisher');"
   end
 
   def get_pg_size(conn)
