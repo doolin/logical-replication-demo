@@ -1,6 +1,6 @@
 # shellcheck shell=bash
 
-source ./ansi_colors.sh
+source ./scripts/utils/ansi_colors.sh
 
 press_enter()
 {
