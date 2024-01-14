@@ -36,6 +36,16 @@ class PGSampler
     'locks,mode=%<lock_modes>s lock_count=%<lock_counts>s %<current_time>s'
   end
 
+  def locks(conn)
+    current_time = (Time.now.to_f * 1_000_000_000).to_i
+
+    get_pg_locks(conn).each do |lock|
+      payload = format(influx_query, lock_modes: lock['mode'], lock_counts: lock['lock_count'],
+                                     current_time:)
+      @influx_client.insert(payload)
+    end
+  end
+
   # There are a couple of ways to loop this. One is to loop outside
   # the connection, which will open a new connection for each loop.
   # Another is to loop inside the connection, which will keep the
@@ -43,19 +53,14 @@ class PGSampler
   # preferable for performance reasons. The connection is closed
   # automatically when the block exits. Which to use depends on what
   # we want to test.
-  def run # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+  def run # rubocop:disable Metrics/MethodLength
     stop_time = Time.now + duration
     PG::Connection.open(pg_options) do |conn|
       loop do
         break if @terminate
         break if Time.now > stop_time
 
-        current_time = (Time.now.to_f * 1_000_000_000).to_i
-        get_pg_locks(conn).each do |lock|
-          payload = format(influx_query, lock_modes: lock['mode'], lock_counts: lock['lock_count'],
-                                         current_time:)
-          @influx_client.insert(payload)
-        end
+        locks(conn)
         sleep sleep_time
       end
     end
@@ -77,7 +82,7 @@ class PGSampler
     options[:duration] || DURATION
   end
 
-  def query
+  def locks_query
     <<-SQL
       SELECT
         pg_locks.mode,
@@ -94,7 +99,7 @@ class PGSampler
   end
 
   def get_pg_locks(conn)
-    conn.exec_params(query)
+    conn.exec_params(locks_query)
   rescue PG::Error => e
     puts "Failed to retrieve PostgreSQL locks: #{e.message}"
     []
