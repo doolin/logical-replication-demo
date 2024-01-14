@@ -3,7 +3,7 @@
 # TODO: metrics to put into influx
 # 1. database stats for publisher, subscriber1, subscriber2
 
-source ./helpers.sh
+source ./scripts/utils/helpers.sh
 infotext "Build and restart the subscriber containers..."
 
 CONTAINERS=("subscriber1" "subscriber2" "publisher" "pubmetrics" "grafana" "telegraf" "fluentbit" "pghero")

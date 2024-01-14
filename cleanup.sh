@@ -1,8 +1,7 @@
 #!/bin/bash
 
 # shellcheck disable=SC1091
-source ./ansi_colors.sh
-source ./helpers.sh
+source ./scripts/utils/helpers.sh
 infotext "This will stop and remove the subscriber docker containers"
 press_enter
 
