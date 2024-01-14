@@ -42,6 +42,19 @@ class PGSampler
     get_pg_locks(conn).each do |lock|
       payload = format(influx_query, lock_modes: lock['mode'], lock_counts: lock['lock_count'],
                                      current_time:)
+      # binding.irb
+      @influx_client.insert(payload)
+    end
+  end
+
+  def size(conn)
+    current_time = (Time.now.to_f * 1_000_000_000).to_i
+    influx_query = 'size,database=publisher size=%<size>s %<current_time>s'
+
+    get_pg_size(conn).each do |size|
+      # binding.irb
+      payload = format(influx_query, size: size['pg_database_size'], current_time:)
+      puts payload
       @influx_client.insert(payload)
     end
   end
@@ -61,6 +74,7 @@ class PGSampler
         break if Time.now > stop_time
 
         locks(conn)
+        size(conn)
         sleep sleep_time
       end
     end
@@ -102,6 +116,17 @@ class PGSampler
     conn.exec_params(locks_query)
   rescue PG::Error => e
     puts "Failed to retrieve PostgreSQL locks: #{e.message}"
+    []
+  end
+
+  def size_query
+    "  SELECT pg_database_size('publisher');"
+  end
+
+  def get_pg_size(conn)
+    conn.exec_params(size_query)
+  rescue PG::Error => e
+    puts "Failed to retrieve PostgreSQL size: #{e.message}"
     []
   end
 end

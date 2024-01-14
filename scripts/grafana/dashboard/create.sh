@@ -9,7 +9,8 @@ API_URL="$GRAFANA_HOST/api/dashboards/db"
 # DASHBOARD_JSON="./scripts/grafana/json/dashboard.json"
 # DASHBOARD_JSON="./scripts/grafana/json/flux_query.json"
 # DASHBOARD_JSON="./scripts/grafana/json/container_stats.json"
-DASHBOARD_JSON="./scripts/grafana/json/postgres_full.json"
+# DASHBOARD_JSON="./scripts/grafana/json/postgres_full.json"
+DASHBOARD_JSON="./scripts/grafana/json/postgres.json"
 
 # DASHBOARD_JSON=(
 #     "./scripts/grafana/json/dashboard.json"
