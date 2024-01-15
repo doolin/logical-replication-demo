@@ -16,3 +16,6 @@ RSpec/SubjectStub:
 Metrics/ClassLength:
   Exclude:
     - lib/pg_sampler.rb # https://doolin.atlassian.net/browse/GEN-366
+
+Metrics/MethodLength:
+  CountAsOne: ['array', 'heredoc', 'method_call']
