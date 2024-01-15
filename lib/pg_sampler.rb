@@ -106,6 +106,21 @@ class PGSampler
     end
   end
 
+  def replication_lag(conn)
+    influx_query = 'replication_lag,database=publisher,application_name=%<application_name>s replay_lag_seconds=%<replay_lag_seconds>s,write_lag_seconds=%<write_lag_seconds>s %<current_time>s' # rubocop:disable Layout/LineLength Metrics/LineLength
+
+    get_pg(conn, replication_lag_query).each do |replication_lag|
+      payload = format(
+        influx_query,
+        application_name: replication_lag['application_name'],
+        replay_lag_seconds: replication_lag['replay_lag_seconds'],
+        write_lag_seconds: replication_lag['write_lag_seconds'],
+        current_time:
+      )
+      @influx_client.insert(payload)
+    end
+  end
+
   def get_pg(conn, query)
     conn.exec_params(query)
   rescue PG::Error => e
@@ -136,6 +151,7 @@ class PGSampler
         transaction_rates(conn)
         cache_hit_ratio(conn)
         checkpoints(conn)
+        replication_lag(conn)
         sleep sleep_time
       end
     end
@@ -214,6 +230,17 @@ class PGSampler
       SELECT checkpoints_timed AS "Timed Checkpoints",
         checkpoints_req AS "Requested Checkpoints"
       FROM pg_stat_bgwriter;
+    SQL
+  end
+
+  # replay_lag and write_lag interval types in PostgreSQL.
+  def replication_lag_query
+    <<~SQL
+      SELECT
+        application_name,
+        COALESCE(EXTRACT(EPOCH FROM replay_lag), 0) AS replay_lag_seconds,
+        COALESCE(EXTRACT(EPOCH FROM write_lag), 0) AS write_lag_seconds
+      FROM pg_stat_replication;
     SQL
   end
 

@@ -41,6 +41,9 @@ run_psql -c "ALTER SYSTEM SET listen_addresses = '*'; " -d "$DB_NAME"
 run_psql -c "ALTER SYSTEM SET shared_preload_libraries = 'pg_stat_statements';" -d "$DB_NAME"
 run_psql -c "CREATE EXTENSION IF NOT EXISTS pg_stat_statements;" -d "$DB_NAME"
 
+# The following can use either SELECT pg_reload_conf(); or restart the server.
+run_psql -c "ALTER SYSTEM SET log_replication_commands = 'on';" -d "$DB_NAME"
+
 # For later
 # run_psql -c "ALTER SYSTEM SET max_replication_slots = 10;" -d "$DB_NAME"
 # run_psql -c "ALTER SYSTEM SET max_wal_senders = 10;" -d "$DB_NAME"
