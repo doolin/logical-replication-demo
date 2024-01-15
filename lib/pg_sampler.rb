@@ -97,6 +97,15 @@ class PGSampler
     end
   end
 
+  def checkpoints(conn)
+    influx_query = 'checkpoints,database=publisher checkpoints_timed=%<checkpoints_timed>s,checkpoints_requested=%<checkpoints_requested>s %<current_time>s' # rubocop:disable Layout/LineLength Metrics/LineLength
+
+    get_pg(conn, checkpoints_query).each do |checkpoints|
+      payload = format(influx_query, checkpoints_timed: checkpoints['Timed Checkpoints'], checkpoints_requested: checkpoints['Requested Checkpoints'], current_time:) # rubocop:disable Layout/LineLength Metrics/LineLength
+      @influx_client.insert(payload)
+    end
+  end
+
   def get_pg(conn, query)
     conn.exec_params(query)
   rescue PG::Error => e
@@ -126,6 +135,7 @@ class PGSampler
         connection_counts(conn)
         transaction_rates(conn)
         cache_hit_ratio(conn)
+        checkpoints(conn)
         sleep sleep_time
       end
     end
@@ -184,7 +194,7 @@ class PGSampler
   end
 
   def transaction_rates_query
-    <<-SQL
+    <<~SQL
       SELECT count(*) FROM pg_stat_activity
       WHERE query = 'SELECT'
       OR query = 'INSERT'
@@ -196,6 +206,14 @@ class PGSampler
   def cache_hit_query
     <<-SQL
       SELECT sum(blks_hit) / nullif(sum(blks_read + blks_hit), 0) AS ratio FROM pg_stat_database
+    SQL
+  end
+
+  def checkpoints_query
+    <<~SQL
+      SELECT checkpoints_timed AS "Timed Checkpoints",
+        checkpoints_req AS "Requested Checkpoints"
+      FROM pg_stat_bgwriter;
     SQL
   end
 
