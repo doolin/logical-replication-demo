@@ -21,9 +21,6 @@ all: $(SVG_OUTPUT) $(PNG_OUTPUT)
 %.png: %.mmd
 	mmdc -i $< -o $@
 
-spotless: clean
-	rm -f $(SVG_OUTPUT) $(PNG_OUTPUT)
-
 .PHONY: all svg png clean
 
 .PHONY: docker1 docker2 publisher telegraf
@@ -59,5 +56,11 @@ sub1:
 sub2:
 	@PGPASSWORD=$(DB_PASSWORD) psql -h localhost -p 5434 -U $(DB_USER) -d $(DB_NAME)
 
+shellcheck:
+	shellcheck -x ./**/*.sh
+
 clean:
-	rm -rf pgbench_log*
+	rm -rf pgbench_log* nohup.out
+
+spotless: clean
+	rm -f $(SVG_OUTPUT) $(PNG_OUTPUT)

@@ -66,6 +66,19 @@ class PGSampler
     end
   end
 
+  def current_time
+    (Time.now.to_f * 1_000_000_000).to_i
+  end
+
+  def connection_counts(conn)
+    influx_query = 'connection_counts,database=publisher connection_counts=%<connection_counts>s %<current_time>s'
+
+    get_pg_connections(conn).each do |connection|
+      payload = format(influx_query, connection_counts: connection['count'], current_time:)
+      @influx_client.insert(payload)
+    end
+  end
+
   # There are a couple of ways to loop this. One is to loop outside
   # the connection, which will open a new connection for each loop.
   # Another is to loop inside the connection, which will keep the
@@ -83,6 +96,7 @@ class PGSampler
         locks(conn)
         size(conn)
         mean_time(conn)
+        connection_counts(conn)
         sleep sleep_time
       end
     end
@@ -102,6 +116,17 @@ class PGSampler
 
   def duration
     options[:duration] || DURATION
+  end
+
+  def connections_query
+    'SELECT count(*) FROM pg_stat_activity'
+  end
+
+  def get_pg_connections(conn)
+    conn.exec_params(connections_query)
+  rescue PG::Error => e
+    puts "Failed to retrieve PostgreSQL connections: #{e.message}"
+    []
   end
 
   def locks_query
