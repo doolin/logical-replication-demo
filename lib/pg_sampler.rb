@@ -88,6 +88,15 @@ class PGSampler
     end
   end
 
+  def cache_hit_ratio(conn)
+    influx_query = 'cache_hit_ratio,database=publisher cache_hit_ratio=%<cache_hit_ratio>s %<current_time>s'
+
+    get_pg(conn, cache_hit_query).each do |ratio|
+      payload = format(influx_query, cache_hit_ratio: ratio['ratio'], current_time:)
+      @influx_client.insert(payload)
+    end
+  end
+
   def get_pg(conn, query)
     conn.exec_params(query)
   rescue PG::Error => e
@@ -102,7 +111,9 @@ class PGSampler
   # preferable for performance reasons. The connection is closed
   # automatically when the block exits. Which to use depends on what
   # we want to test.
-  def run # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/AbcSize
+  def run
     stop_time = Time.now + duration
     PG::Connection.open(pg_options) do |conn|
       loop do
@@ -114,12 +125,15 @@ class PGSampler
         mean_time(conn)
         connection_counts(conn)
         transaction_rates(conn)
+        cache_hit_ratio(conn)
         sleep sleep_time
       end
     end
   rescue PG::Error => e
     puts "Unable to connect to PostgreSQL: #{e.message}"
   end
+  # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/AbcSize
 
   def stop
     @terminate = true
@@ -176,6 +190,12 @@ class PGSampler
       OR query = 'INSERT'
       OR query = 'UPDATE'
       OR query = 'DELETE'
+    SQL
+  end
+
+  def cache_hit_query
+    <<-SQL
+      SELECT sum(blks_hit) / nullif(sum(blks_read + blks_hit), 0) AS ratio FROM pg_stat_database
     SQL
   end
 
