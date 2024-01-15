@@ -79,6 +79,22 @@ class PGSampler
     end
   end
 
+  def transaction_rates(conn)
+    influx_query = 'transaction_rates,database=publisher transaction_rates=%<transaction_rates>s %<current_time>s'
+
+    get_pg(conn, transaction_rates_query).each do |rates|
+      payload = format(influx_query, transaction_rates: rates['count'], current_time:)
+      @influx_client.insert(payload)
+    end
+  end
+
+  def get_pg(conn, query)
+    conn.exec_params(query)
+  rescue PG::Error => e
+    puts "Failed to retrieve PostgreSQL size: #{e.message}"
+    []
+  end
+
   # There are a couple of ways to loop this. One is to loop outside
   # the connection, which will open a new connection for each loop.
   # Another is to loop inside the connection, which will keep the
@@ -97,6 +113,7 @@ class PGSampler
         size(conn)
         mean_time(conn)
         connection_counts(conn)
+        transaction_rates(conn)
         sleep sleep_time
       end
     end
@@ -150,6 +167,16 @@ class PGSampler
   rescue PG::Error => e
     puts "Failed to retrieve PostgreSQL locks: #{e.message}"
     []
+  end
+
+  def transaction_rates_query
+    <<-SQL
+      SELECT count(*) FROM pg_stat_activity
+      WHERE query = 'SELECT'
+      OR query = 'INSERT'
+      OR query = 'UPDATE'
+      OR query = 'DELETE'
+    SQL
   end
 
   def mean_time_query
