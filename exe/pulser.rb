@@ -12,7 +12,8 @@ options = {
   threads: 3,
   clients: 10,
   duration: 600,
-  sleep_time: 15
+  sleep_time: 15,
+  frequency: 0.2
 }
 
 # Define the options and parse them
@@ -25,6 +26,10 @@ OptionParser.new do |opts|
 
   opts.on('-s', '--scale SCALE', Integer, 'Scale factor for benchmark') do |scale|
     options[:scale] = scale
+  end
+
+  opts.on('-f', '--frequency FREQUENCY', Float, 'Frequency of pulse') do |frequency|
+    options[:frequency] = frequency
   end
 
   opts.on('-S', '--sleep-time SLEEPTIME', Integer, 'Sleep time between intervals') do |sleep_time|

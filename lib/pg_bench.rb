@@ -22,6 +22,7 @@ class PGBench
   CLIENTS = 10
   THREADS = 3
   SLEEP_TIME = 15
+  FREQUENCY = 0.2
 
   def initialize(options = {})
     @options = options
@@ -47,6 +48,7 @@ class PGBench
   # Send an intermittent pulse of load to the database.
   def pulse
     stop_time = Time.now + time_in_seconds
+    options[:duration] = 1.fdiv(options[:frequency] || FREQUENCY)
 
     while Time.now < stop_time
       bench_sys(pgbench)
@@ -103,6 +105,10 @@ class PGBench
 
   def scale
     options[:scale] || SCALE
+  end
+
+  def frequency
+    options[:frequency] || FREQUENCY
   end
 
   def sleep_time

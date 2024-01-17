@@ -7,6 +7,6 @@
 # source pgbench.sh -T 1
 # sleep 1
 
-DURATION=10
+DURATION=60
 ./exe/background_hum.rb -T $DURATION &
 nohup ./exe/pg_sampler.rb -T $DURATION &
