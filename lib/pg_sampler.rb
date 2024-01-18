@@ -32,14 +32,11 @@ class PGSampler
     @influx_client = InfluxDBClient.new(INFLUXDB_OPTIONS)
   end
 
-  def influx_query
-    'locks,mode=%<lock_modes>s lock_count=%<lock_counts>s %<current_time>s'
-  end
-
   def locks(conn)
     current_time = (Time.now.to_f * 1_000_000_000).to_i
+    influx_query = 'locks,mode=%<lock_modes>s lock_count=%<lock_counts>s %<current_time>s'
 
-    get_pg_locks(conn).each do |lock|
+    get_pg(conn, locks_query).each do |lock|
       payload = format(influx_query, lock_modes: lock['mode'], lock_counts: lock['lock_count'],
                                      current_time:)
       @influx_client.insert(payload)
@@ -50,7 +47,7 @@ class PGSampler
     current_time = (Time.now.to_f * 1_000_000_000).to_i
     influx_query = 'size,database=publisher size=%<size>s %<current_time>s'
 
-    get_pg_size(conn).each do |size|
+    get_pg(conn, size_query).each do |size|
       payload = format(influx_query, size: size['pg_database_size'], current_time:)
       @influx_client.insert(payload)
     end
@@ -60,7 +57,7 @@ class PGSampler
     current_time = (Time.now.to_f * 1_000_000_000).to_i
     influx_query = 'mean_time_query,database=publisher mean_time=%<mean_time>s %<current_time>s'
 
-    get_pg_mean_query(conn).each do |mean|
+    get_pg(conn, mean_time_query).each do |mean|
       payload = format(influx_query, mean_time: mean['avg_exec_time'], current_time:)
       @influx_client.insert(payload)
     end
@@ -73,7 +70,7 @@ class PGSampler
   def connection_counts(conn)
     influx_query = 'connection_counts,database=publisher connection_counts=%<connection_counts>s %<current_time>s'
 
-    get_pg_connections(conn).each do |connection|
+    get_pg(conn, connections_query).each do |connection|
       payload = format(influx_query, connection_counts: connection['count'], current_time:)
       @influx_client.insert(payload)
     end
@@ -123,8 +120,8 @@ class PGSampler
 
   def get_pg(conn, query)
     conn.exec_params(query)
-  rescue PG::Error => e
-    puts "Failed to retrieve PostgreSQL size: #{e.message}"
+  rescue PG::Error => error
+    puts "Failed to retrieve PostgreSQL size: #{error.message}"
     []
   end
 
@@ -155,8 +152,8 @@ class PGSampler
         sleep sleep_time
       end
     end
-  rescue PG::Error => e
-    puts "Unable to connect to PostgreSQL: #{e.message}"
+  rescue PG::Error => error
+    puts "Unable to connect to PostgreSQL: #{error.message}"
   end
   # rubocop:enable Metrics/MethodLength
   # rubocop:enable Metrics/AbcSize
@@ -179,13 +176,6 @@ class PGSampler
     'SELECT count(*) FROM pg_stat_activity'
   end
 
-  def get_pg_connections(conn)
-    conn.exec_params(connections_query)
-  rescue PG::Error => e
-    puts "Failed to retrieve PostgreSQL connections: #{e.message}"
-    []
-  end
-
   def locks_query
     <<-SQL
       SELECT
@@ -200,13 +190,6 @@ class PGSampler
       GROUP BY
         pg_locks.mode;
     SQL
-  end
-
-  def get_pg_locks(conn)
-    conn.exec_params(locks_query)
-  rescue PG::Error => e
-    puts "Failed to retrieve PostgreSQL locks: #{e.message}"
-    []
   end
 
   def transaction_rates_query
@@ -253,21 +236,7 @@ class PGSampler
     SQL
   end
 
-  def get_pg_mean_query(conn)
-    conn.exec_params(mean_time_query)
-  rescue PG::Error => e
-    puts "Failed to retrieve PostgreSQL size: #{e.message}"
-    []
-  end
-
   def size_query
     "SELECT pg_database_size('publisher');"
-  end
-
-  def get_pg_size(conn)
-    conn.exec_params(size_query)
-  rescue PG::Error => e
-    puts "Failed to retrieve PostgreSQL size: #{e.message}"
-    []
   end
 end

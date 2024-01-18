@@ -28,15 +28,7 @@ detectors:
     - PGSampler#run
   UncommunicativeVariableName:
     exclude:
-    - BooksInserter#connect_to_db
-    - BooksInserter#insert_book
     - BooksInserter#rand_rayleigh
-    - PGSampler#get_pg
-    - PGSampler#get_pg_connections
-    - PGSampler#get_pg_locks
-    - PGSampler#get_pg_mean_query
-    - PGSampler#get_pg_size
-    - PGSampler#run
   UtilityFunction:
     exclude:
     - silence_stream

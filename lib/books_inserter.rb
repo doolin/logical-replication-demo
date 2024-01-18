@@ -22,8 +22,8 @@ class BooksInserter
 
   def connect_to_db
     @conn = PG.connect(@connection_params)
-  rescue PG::Error => e
-    puts "Unable to connect to database: #{e.message}"
+  rescue PG::Error => error
+    puts "Unable to connect to database: #{error.message}"
     exit 1
   end
 
@@ -40,8 +40,8 @@ class BooksInserter
       'INSERT INTO books (sku, title, topic) VALUES ($1, $2, $3)',
       [sku, title, topic]
     )
-  rescue PG::Error => e
-    puts "Insert failed: #{e.message}"
+  rescue PG::Error => error
+    puts "Insert failed: #{error.message}"
   end
 
   # Run the inserter indefinitely until killed.
