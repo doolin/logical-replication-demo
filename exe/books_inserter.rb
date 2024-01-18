@@ -18,8 +18,8 @@ threads = []
     inserter = BooksInserter.new
     begin
       inserter.run
-    rescue StandardError => e
-      puts "Thread #{i} encountered an error: #{e.message}"
+    rescue StandardError => error
+      puts "Thread #{i} encountered an error: #{error.message}"
     ensure
       inserter.close_db_connection
     end

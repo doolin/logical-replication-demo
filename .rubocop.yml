@@ -15,7 +15,10 @@ RSpec/SubjectStub:
 
 Metrics/ClassLength:
   Exclude:
-    - lib/pg_sampler.rb # https://doolin.atlassian.net/browse/GEN-366
+    - lib/pg_sampler.rb # 100 lines is too few.
 
 Metrics/MethodLength:
   CountAsOne: ['array', 'heredoc', 'method_call']
+
+Naming/RescuedExceptionsVariableName:
+  PreferredName: error
