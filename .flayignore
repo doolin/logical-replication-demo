@@ -1,0 +1,4 @@
+# Github actions are not failing as a result
+# of having a lot of flay issues, which is a
+# surprise. Web search turned up nothing on
+# flay and github actions.

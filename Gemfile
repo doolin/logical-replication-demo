@@ -4,6 +4,7 @@ source 'https://rubygems.org'
 
 gem 'curses'
 gem 'faker'
+gem 'flay'
 gem 'flog'
 gem 'git-lint'
 gem 'influxdb-client'
