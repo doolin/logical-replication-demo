@@ -23,6 +23,9 @@ jobs:
     - name: Reek
       run: bundle exec reek
 
+    - name: flay
+      run: bundle exec flay
+
     # - name: Run RSpec
     #   run: bundle exec rspec
 
