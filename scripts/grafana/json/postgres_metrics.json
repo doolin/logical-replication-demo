@@ -2,7 +2,7 @@
   "dashboard": {
     "id": null,
     "uid": null,
-    "title": "PostgresQL Stats",
+    "title": "PostgreSQL Metrics",
     "panels": [
       {
         "id": 1,

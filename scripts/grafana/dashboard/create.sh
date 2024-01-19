@@ -6,18 +6,11 @@ API_URL="$GRAFANA_HOST/api/dashboards/db"
 
 
 # Dashboard JSON file
-# DASHBOARD_JSON="./scripts/grafana/json/dashboard.json"
+# TODO: Loop over these files using the output from `ls`.
 # DASHBOARD_JSON="./scripts/grafana/json/flux_query.json"
 # DASHBOARD_JSON="./scripts/grafana/json/container_stats.json"
-# DASHBOARD_JSON="./scripts/grafana/json/postgres_full.json"
-DASHBOARD_JSON="./scripts/grafana/json/postgres.json"
-
-# DASHBOARD_JSON=(
-#     "./scripts/grafana/json/dashboard.json"
-#     "./scripts/grafana/json/flux_query.json"
-#     "./scripts/grafana/json/container_stats.json"
-#     "./scripts/grafana/json/postgres.json"
-# )
+DASHBOARD_JSON="./scripts/grafana/json/postgres_stats.json"
+# DASHBOARD_JSON="./scripts/grafana/json/postgres_metrics.json"
 
 # This Bash script snippet defines DASHBOARD_JSON as an array
 # containing three file paths. You can access the elements of

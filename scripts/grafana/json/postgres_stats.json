@@ -1,6 +1,6 @@
 {
   "dashboard": {
-    "title": "PostgreSQL Metrics",
+    "title": "PostgreSQL Stats",
     "panels": [
       {
         "title": "Database Size",
