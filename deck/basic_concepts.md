@@ -1,4 +1,13 @@
-# Dockerize All the Things
+
+<!--
+footer: Blackbird/presents: Production @ Home
+paginate: true
+_paginate: false
+-->
+
+# Production @ Home
+
+AKA Dockerize All the Things
 
 ---
 
@@ -52,7 +61,14 @@ We now have 6 containers running on the same Docker network
 
 - Review `./replication.sh`
 - Run `./replication.sh`
+- Run `./scripts/test.sh`
 - Check out the tables
+
+---
+
+# Checkout publisher and subscriber tables
+
+Did we do that last slide? If not let's check them out.
 
 ---
 
@@ -85,3 +101,57 @@ We now have 6 containers running on the same Docker network
 ---
 
 # Questions?
+
+---
+
+
+# Moar?
+
+---
+
+# What is a model?
+
+(this is a quiz)
+
+---
+
+# Def. model
+
+"A representation of a person or thing or of a proposed structure, typically on a smaller scale than the original."
+
+From [Oxford Languages](https://languages.oup.com/google-dictionary-en/).
+
+---
+
+# Why is this important?
+
+This talk demonstrated a _model_ of a production infrastructure.
+
+But it's not a production infrastructure.
+
+Referring to "models" in the context of Rails requires dealing with _polysemy_,
+that is, one word ("model") with two or more related meanings.
+
+So, what?
+
+---
+
+# Solving performance issues
+
+Make a model of the poorly performing code, fix the model, apply the fix to production.
+
+In some non-trivial sense, writing a spec is modeling desired production behavior.
+
+---
+
+## That's all Folks!
+
+<style>
+img[alt~="center"] {
+  display: block;
+  margin: 0 auto;
+}
+</style>
+
+
+![That's all folks! center](./thats-all-folks.jpg)

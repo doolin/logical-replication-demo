@@ -8,7 +8,7 @@ API_URL="$GRAFANA_HOST/api/dashboards/db"
 # Dashboard JSON file
 # TODO: Loop over these files using the output from `ls`.
 # DASHBOARD_JSON="./scripts/grafana/json/flux_query.json"
-# DASHBOARD_JSON="./scripts/grafana/json/container_stats.json"
+# DASHBOARD_JSON="./scripts/grafana/json/container_metrics.json"
 DASHBOARD_JSON="./scripts/grafana/json/postgres_stats.json"
 # DASHBOARD_JSON="./scripts/grafana/json/postgres_metrics.json"
 
