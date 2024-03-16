@@ -6,6 +6,20 @@ The goal here is to better understand how Postgres logical replication works, an
 
 ---
 
+## ETL analog (fix this later)
+
+pg_sampler has:
+
+    Extract data from postgres
+
+    Transform the postgres results to influx
+
+    Load into influx
+
+The problem this solves is that postgres provides point values but we want trends over time.
+
+---
+
 # Presentations
 
 Running the slides:
