@@ -8,7 +8,9 @@ The goal here is to better understand how Postgres logical replication works, an
 
 # Presentations
 
-Running the slides: `npx @marp-team/marp-cli@latest -s deck/`
+Running the slides:
+- `PORT=9876 npx @marp-team/marp-cli@latest -s deck/`
+- http://localhost:9876/
 
 ---
 
