@@ -53,5 +53,7 @@ docker network connect pubsub_network grafana
 # Automatically construct metrics dashboard
 source ./scripts/grafana/dashboard/create.sh
 
+# Clickhouse
+source ./scripts/docker/run/clickhouse.sh
 
 echo "Containers have been updated."
