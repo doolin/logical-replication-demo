@@ -1,0 +1,27 @@
+# Use the official ClickHouse server image as a base
+FROM clickhouse/clickhouse-server:latest
+
+# Install additional tools
+RUN apt-get update && apt-get install -y \
+    netcat-openbsd \
+    iputils-ping \
+    curl \
+    less \
+    tcpdump \
+    nmap \
+    iperf \
+    net-tools \
+    traceroute \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN chown -R clickhouse:clickhouse /var/lib/clickhouse
+
+# Switch to the clickhouse user
+USER clickhouse
+
+# Expose ClickHouse ports
+EXPOSE 8123 9000 9009
+
+# Set default command to run ClickHouse server
+CMD ["clickhouse-server"]
