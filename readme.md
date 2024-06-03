@@ -6,6 +6,13 @@ The goal here is to better understand how Postgres logical replication works, an
 
 ---
 
+## Clickhouse while it's top of mind
+
+Command line invocation:
+
+- `clickhouse client --host localhost --port 9000 --user username --password password --database my_database`
+
+
 ## ETL analog (fix this later)
 
 pg_sampler has:
