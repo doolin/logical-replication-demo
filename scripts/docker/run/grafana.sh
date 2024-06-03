@@ -12,7 +12,8 @@ fi
 m4 -DINFLUXDB_TOKEN="$INFLUX_LOCAL_TOKEN" influxdb-datasource.m4 > influxdb-datasource.yml
 
 docker buildx build -t grafana -f Dockerfile.grafana .
-docker run -d --name grafana \
+docker run -d \
+  --name grafana \
   -p 3000:3000 \
   -v grafana-storage:/var/lib/grafana \
   -v ./influxdb-datasource.yml:/etc/grafana/provisioning/datasources/influxdb-datasource.yml \

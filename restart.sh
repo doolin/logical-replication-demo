@@ -6,7 +6,7 @@
 source ./scripts/utils/helpers.sh
 infotext "Build and restart the subscriber containers..."
 
-CONTAINERS=("subscriber1" "subscriber2" "publisher" "pubmetrics" "grafana" "telegraf" "fluentbit" "pghero")
+CONTAINERS=("subscriber1" "subscriber2" "publisher" "pubmetrics" "grafana" "telegraf" "fluentbit" "pghero" "clickhouse_server" "clickhouse_custom_server")
 
 for CONTAINER_NAME in "${CONTAINERS[@]}"; do
   if docker ps -a | grep -qw "$CONTAINER_NAME"; then

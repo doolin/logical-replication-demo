@@ -17,6 +17,7 @@ RUN apt-get update && apt-get install -y \
 
 RUN chown -R clickhouse:clickhouse /var/lib/clickhouse
 
+
 # Switch to the clickhouse user
 USER clickhouse
 
