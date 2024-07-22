@@ -6,7 +6,7 @@
 source ./scripts/utils/helpers.sh
 infotext "Build and restart the subscriber containers..."
 
-CONTAINERS=("subscriber1" "subscriber2" "publisher" "pubmetrics" "grafana" "telegraf" "fluentbit" "pghero" "clickhouse_server" "clickhouse_custom_server")
+CONTAINERS=("subscriber1" "subscriber2" "publisher" "pubmetrics" "grafana" "telegraf" "fluentbit" "pghero" "clickhouse_server" "clickhouse_custom_server" "traefik")
 
 for CONTAINER_NAME in "${CONTAINERS[@]}"; do
   if docker ps -a | grep -qw "$CONTAINER_NAME"; then
@@ -55,5 +55,8 @@ source ./scripts/grafana/dashboard/create.sh
 
 # Clickhouse
 source ./scripts/docker/run/clickhouse.sh
+
+#Traefik
+source ./scripts/docker/run/traefik.sh
 
 echo "Containers have been updated."
