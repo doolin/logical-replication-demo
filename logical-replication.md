@@ -1,21 +1,8 @@
-# Production @ Home
+# Postgres Logical Replication
 
-This project started as an investigation into implementing logical replication between various Postgres databases running in containers on a Macbook. Over time, it has evolved into a more general purpose investigation of production toolchains for operating web applications. While "full scale" simulation is not possible, a modern Macbook with Docker containers allows constructing a reasonable facsimile which can be stressed in ways similar to how production environments are stressed. For example, running a Postgres database or a Rails application in very small containers will induce similar errors under loads easy to script from a Macbook.
+The goal here is to better understand how Postgres logical replication works, and provide a testbed for learning how best to configure logical replication. First, we set up Postgres logical replication running on Macbook localhost, publishing to an instance of Postgres running in a Docker container. We'll be using the [Postgres documentation](https://www.postgresql.org/docs/15/logical-replication.html). The subscribing database server will be running in a local Docker image, and we want to make sure we actually use the local image when we run the container.
 
-A project like this is open-ended. The rabbit hole goes very, very deep.
-
-## What's in the box?
-
-The cool thing about this sort of project is it enables investigation into many aspects of how web applications operate. Here's a few:
-
-- [Postgres logical replication](./logical-replication.md)
-- [Monitoring with Influx and Grafana](./monitoring.md)
-
-## Presentations
-
-Running the slides:
-- `PORT=9876 npx @marp-team/marp-cli@latest -s deck/`
-- http://localhost:9876/
+![Architecture](/images/logical-replication-architecture.svg)
 
 ---
 
