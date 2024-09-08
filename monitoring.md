@@ -2,6 +2,15 @@
 
 Docker provides a massive amount of leverage for building network applications on a single machine. Logging tools such as Grafana and Influx would be expected to run on different servers at scale. Docker is much easier than hooking up a network of physical servers, and much cheaper than purchasing all the virtual servers from a provider.
 
+---
+
+## Clickhouse while it's top of mind
+
+Command line invocation:
+
+- `clickhouse client --host localhost --port 9000 --user username --password password --database my_database`
+
+---
 
 ## Telegraf
 
@@ -122,4 +131,16 @@ from(bucket: "ruby_test")
   |> filter(fn: (r) => r["cpu"] == "cpu-total")
   |> filter(fn: (r) => r["_measurement"] == "docker_container_cpu")
   |> filter(fn: (r) => r["_field"] == "usage_percent")
+```
+#### Container logging
+
+The easiest way is to set up a tmux session as follows.
+
+Logs for Influx and Grafana:
+```
+tmux new-session -d -s metrics-logs
+tmux split-window -h -t metrics-logs
+tmux send-keys -t metrics-logs:0.0 'docker logs -f pubmetrics' C-m
+tmux send-keys -t metrics-logs:0.1 'docker logs -f grafana' C-m
+tmux attach -t metrics-logs
 ```
