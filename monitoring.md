@@ -12,6 +12,18 @@ Command line invocation:
 
 ---
 
+## Postgres behavior monitoring
+
+`pg_sampler` script does the following:
+
+- Extract data from postgres
+- Transform the postgres results to influx
+- Load into influx
+
+It's a sort of ETL process. The problem this solves is that postgres provides point values but we want trends over time.
+
+---
+
 ## Telegraf
 
 The primary challenge for Telegraf is getting user and group premissions correctly configured. Incorrect configuration manifests as the following:

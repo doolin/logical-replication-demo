@@ -57,6 +57,6 @@ source ./scripts/grafana/dashboard/create.sh
 source ./scripts/docker/run/clickhouse.sh
 
 #Traefik
-source ./scripts/docker/run/traefik.sh
+# source ./scripts/docker/run/traefik.sh
 
 echo "Containers have been updated."

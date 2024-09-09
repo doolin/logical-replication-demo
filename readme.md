@@ -10,6 +10,8 @@ The cool thing about this sort of project is it enables investigation into many 
 
 - [Postgres logical replication](./logical-replication.md)
 - [Monitoring with Influx and Grafana](./monitoring.md)
+- Run Rails queries and watch what happens in the entire system, particularly the database, and how the behavior propogates through the metrics. Will need to generate some fairly burly synthetic data to be able to stress the system.
+
 
 ## Presentations
 
@@ -17,7 +19,17 @@ Running the slides:
 - `PORT=9876 npx @marp-team/marp-cli@latest -s deck/`
 - http://localhost:9876/
 
-### Preparing the Docker system
+
+## TODO
+
+1. Rewrite this whole document.
+2. Have one section for a completely manual procedure for one pub/sub.
+3. Have a another section for full automated two pub/subs.
+4. Describe the makefile and scripts.
+5. Rewrite as a toolbox of different fun things people can do.
+
+
+## Preparing the Docker system
 
 Skip this section if you're good with Docker and know how to use containers effectively on localhost.
 
@@ -39,24 +51,10 @@ Once that's done, the following should _not_ return any information:
 Now it's time to rebuild.
 
 
+## Operation
 
 
-
-## ETL analog (fix this later)
-
-pg_sampler has:
-
-    Extract data from postgres
-
-    Transform the postgres results to influx
-
-    Load into influx
-
-The problem this solves is that postgres provides point values but we want trends over time.
-
----
-
-**2023-11-22**
+### Benchmrking
 
 Do the following steps to replicate set up for benchmarking:
 
@@ -71,16 +69,7 @@ Do the following steps to replicate set up for benchmarking:
 
 
 
-**2023-11-10**
-
-Here's a list of things on my mind. I don't have time to do them right now, or even
-plan them out in detail, but having them written out explicitly is helpful.
-
-- The overall point of the exercise is to run Rails queries and watch what happens in the entire system, particularly the database, and how the behavior propogates through the metrics.
-- Will need to generate some fairly burly synthetic data to be able to stress the system.
-
-
-**2023-11-04**
+### Importing from Goodreads
 
 - `./restart.sh`
 - `./replication.sh`
@@ -91,16 +80,6 @@ plan them out in detail, but having them written out explicitly is helpful.
 - [Log into influx and check the data](http://localhost:8086/orgs/61386260b136e3c2/data-explorer?fluxScriptEditor)
 - [Log into grafana and check the data](http://localhost:3000/d/ee3f1dd1-31ef-4efa-a26a-a9d30fd6ebb0/testem-dashboard?orgId=1&viewPanel=1&editPanel=1)
 
-TODO:
-
-1. Rewrite this whole document.
-2. Have one section for a completely manual procedure for one pub/sub.
-3. Have a another section for full automated two pub/subs.
-4. Describe the makefile and scripts.
-5. Consider rewriting as a toolbox of different fun things people can do.
-6. Monitor container stats in Grafana, creating a multi-paned dashboard.
-7. Monitor other database values than locks, add to dashboard.
-8. Provision grafana queries via API.
 
 
 ## Semi-manual pub/sub
