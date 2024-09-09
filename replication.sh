@@ -21,12 +21,15 @@ DB_NAME="publisher"
 
 # Function to run psql command
 run_psql() {
+  # the -X flag disables .psqlrc file
   PGPASSWORD=foobar psql -p "$PG_PORT" -h "$PG_HOST" -U "$PG_USER" "$@"
 }
 
 # Prepare the publisher database.
 # Reminder: -f loads a file, -c indicates a sql command to run.
 BOOKS_SCHEMA="./scripts/sql/books_schema.sql"
+
+echo "HERE"
 
 run_psql -c "DROP DATABASE IF EXISTS $DB_NAME;" 2&> /dev/null
 run_psql -c "CREATE DATABASE $DB_NAME;"

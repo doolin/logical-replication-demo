@@ -4,8 +4,13 @@
 # MEMORY=$DEFAULT_MEMORY
 DURATION=60
 SCALE=10
-CLIENTS=10
+CLIENTS=2
 THREADS=3
+
+DB_NAME="publisher"
+PG_USER="postgres"
+HOST="localhost"
+PORT=5435
 
 # Function to show help
 show_help() {
@@ -13,12 +18,26 @@ show_help() {
     echo "Options:"
     echo "  -T <seconds>   Duration of the benchmark in seconds"
     echo "  -c <clients>   Number of clients to simulate"
+    echo "  -r             Reset the pgbench tables before starting the benchmark"
     echo "  -j <threads>   Number of threads (jobs) to use, must be less than or equal to the number of clients"
     echo "  -h             Display this help and exit"
 }
 
+reset_pgbench() {
+    echo "Resetting pgbench tables..."
+    local tables=("pgbench_accounts" "pgbench_branches" "pgbench_history" "pgbench_tellers")
+
+    for table in "${tables[@]}"; do
+        echo "Dropping table: $table"
+        PGPASSWORD=foobar psql -h $HOST -p $PORT -U $PG_USER -d $DB_NAME -c "DROP TABLE IF EXISTS $table;"
+    done
+
+    echo "Tables dropped. Re-initializing pgbench with scale factor: $SCALE"
+    PGPASSWORD=foobar pgbench -h $HOST -p $PORT -U $PG_USER -i -s $SCALE $DB_NAME
+}
+
 # Process command-line options
-while getopts ":hT:c:j:" opt; do
+while getopts ":hT:c:j:r" opt; do
     case ${opt} in
         h )
             show_help
@@ -40,6 +59,9 @@ while getopts ":hT:c:j:" opt; do
                 exit 1
             fi
             ;;
+        r )
+            RESET=true
+            ;;
         j )
             THREADS="${OPTARG}"
             # Check if the provided number of threads is a number
@@ -60,25 +82,22 @@ while getopts ":hT:c:j:" opt; do
     esac
 done
 
-DB_NAME="publisher"
-PG_USER="postgres"
-HOST="localhost"
-PORT=5435
 
 # Check if pgbench has been initialized
-if PGPASSWORD=foobar psql -h $HOST -p $PORT -U $PG_USER -d $DB_NAME \
-   -c "SELECT 'table_exists' WHERE EXISTS (SELECT FROM pg_tables WHERE tablename = 'pgbench_accounts');" \
-   | grep -q 'table_exists'
-then
-    echo "pgbench already initialized."
+if [[ $RESET == true ]]; then
+    reset_pgbench
 else
-    echo "Initializing pgbench..."
-    # Initialize the database
-    # -s is scale factor
-    # -i is initialize
-    PGPASSWORD=foobar pgbench -h $HOST -p $PORT -U $PG_USER -i -s $SCALE $DB_NAME
+    # Check if pgbench has been initialized
+    if PGPASSWORD=foobar psql -h $HOST -p $PORT -U $PG_USER -d $DB_NAME \
+       -c "SELECT 'table_exists' WHERE EXISTS (SELECT FROM pg_tables WHERE tablename = 'pgbench_accounts');" \
+       | grep -q 'table_exists'
+    then
+        echo "pgbench already initialized."
+    else
+        echo "Initializing pgbench with scale factor: $SCALE"
+        PGPASSWORD=foobar pgbench -h $HOST -p $PORT -U $PG_USER -i -s $SCALE $DB_NAME
+    fi
 fi
-
 # Run the benchmark
 # -T is duration in seconds
 # -c is number of clients

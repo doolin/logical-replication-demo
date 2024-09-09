@@ -23,4 +23,4 @@ RUN apt-get update && \
       traceroute nmap tcpdump iperf && \
     rm -rf /var/lib/apt/lists/*
 
-CMD ["postgres"] # , "-c", "config_file=/etc/postgresql/postgresql.conf"]
+CMD ["postgres"]
