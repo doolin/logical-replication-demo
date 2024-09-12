@@ -11,7 +11,7 @@ done
 
 # Telegraf
 # TODO: display docker stats in influx
-localconf="/$HOME/src/logical-replication-demo/telegraf.conf"
+localconf="/$HOME/src/production-at-home/telegraf.conf"
 docker buildx build -t telegraf -f Dockerfile.telegraf .
 # Apparently, the network needs to be created before the container is run.
 docker network ls | grep -q "pubsub_network" || docker network create pubsub_network
